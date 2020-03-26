@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group 'com.botlist'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compile ('net.dv8tion:JDA:4.1.1_101'){
+        exclude module: 'opus-java'
+    }
+    compile 'com.jagrosh:jda-utilities:3.0.2'
+    compile group: 'org.json', name: 'json', version: '20180813'
+    compile 'com.jagrosh:jda-utilities-menu:3.0.1'
+    compile "org.cache2k:cache2k-core:1.2.2.Final"
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    implementation 'org.reflections:reflections:0.9.12'
+    compile group: 'com.ibm.icu', name: 'icu4j', version: '66.1'
+
+
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'com.kovacs.Kovacs'
+    }
+    archiveBaseName = 'Kovacs'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
