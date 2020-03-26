@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class ReloadConfig extends Command {
         try{
             Config.reload();
             event.reply("Reloaded Config!");
+            Audit.log(this, event, "Config Reloaded");
         } catch (IOException e){
             event.reply("IOException dummy.");
         }

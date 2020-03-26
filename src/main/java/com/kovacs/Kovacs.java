@@ -17,16 +17,15 @@ package com.kovacs;
 
 import com.ibm.icu.text.Normalizer2;
 import com.ibm.icu.text.SpoofChecker;
-import com.ibm.icu.text.UnicodeSet;
-import com.ibm.icu.util.ULocale;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.kovacs.commandclient.CustomClientBuilder;
-import com.kovacs.commands.generic.Ping;
-import com.kovacs.commands.generic.Test;
+import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
+import com.kovacs.listeners.AutoMod;
+import com.kovacs.listeners.EventListener;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.AccountType;
@@ -49,9 +48,8 @@ public class Kovacs {
     public static JDA bot;
     public static EventWaiter waiter;
     /*
-    todo: mute/unmute, delete on sight, sync dos and mos, remove mos, dos, bos, show config, enable and disable automod, audit log
-    //test onsight commands
-    //where you left off: getting eventlistener set up
+    todo: on sight stuff, audit log, command to dehoist/clean all/select members, add to unicode dictionary?
+    //make example config
      */
     public static void main(String[] args) throws LoginException, IOException {
         config = Config.open();
@@ -60,22 +58,23 @@ public class Kovacs {
         Unicode.setNormalizer(Normalizer2.getNFKCInstance());
         Unicode.setSpoofChecker(checker);
 
-        Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new AddOwner(),
-                new Automod(), new Blacklist(), new ReloadConfig(), new RemoveOwner(), new SetMutedRole(),
-                new ShowConfig(), new Whitelist()};
+        Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new Sudo(),
+                new RemoveBOS(), new Blacklist(), new ReloadConfig(), new AutoMod(), new SetAuditChannel(),
+                new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
+                new Automod(), new RemoveDOS(), new RemoveMOS()};
 
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune()};
 
-        Command[] generic = new Command[]{new Ping(), new Test()};
+        Command[] generic = new Command[]{new Ping(), new Test(), new Normalize(), new Help(), new Info()};
 
         CommandClient commandClient = new CustomClientBuilder()
-                .setOwnerId(config.getString("owner"))
+                .setOwnerId(config.getString("root"))
                 .setCoOwnerIds(config.getJSONArray("sudo").toList().toArray(new String[]{}))
                 .setPrefix(config.getString("prefix"))
                 .setAlternativePrefix("@mention")
                 .addCommands(configCommands)
                 .addCommands(moderation)
-                .addCommands(generic) //what to do with this command
+                .addCommands(generic)
                 .setActivity(Activity.of(ActivityType.valueOf(ActivityType.class, config.getString("activityType")),
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)

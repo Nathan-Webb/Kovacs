@@ -13,35 +13,21 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.kovacs.commands.generic;
 
+package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.StringCleaning;
-import com.kovacs.tools.Unicode;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
-public class Test extends Command {
-    final static Logger logger = LoggerFactory.getLogger(Test.class);
-
-
-
-
-    public Test() {
-        this.name = "test";
-        this.ownerCommand = true;
-        this.aliases = new String[]{"t"};
+public class ManageNicks extends Command {
+    public ManageNicks() {
+        this.name = "ManageNicks";
+        this.aliases = new String[]{};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        //normalize, then scrape useless char
-        event.reply(Boolean.toString(Unicode.isUselessChar('❎')));
-    }
 
+
+    }
 }

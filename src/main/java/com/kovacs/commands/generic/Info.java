@@ -13,35 +13,31 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.kovacs.commands.generic;
 
+package com.kovacs.commands.generic;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.StringCleaning;
-import com.kovacs.tools.Unicode;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kovacs.tools.Config;
+import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.Arrays;
+import java.awt.*;
 
-public class Test extends Command {
-    final static Logger logger = LoggerFactory.getLogger(Test.class);
-
-
-
-
-    public Test() {
-        this.name = "test";
-        this.ownerCommand = true;
-        this.aliases = new String[]{"t"};
+public class Info extends Command {
+    public Info() {
+        this.name = "Info";
+        this.aliases = new String[]{"botinfo", "dont_remove_this_or_else_ill_be_sad"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        //normalize, then scrape useless char
-        event.reply(Boolean.toString(Unicode.isUselessChar('❎')));
-    }
 
+        EmbedBuilder infoEmbed = new EmbedBuilder();
+        infoEmbed.setColor(Color.ORANGE)
+                .addField("Owner", "<@" + Config.getString("root") + ">", false)
+                .addField("Library", "[DV8FromTheWorld/JDA](https://github.com/DV8FromTheWorld/JDA)", false)
+                .addField("Github", "[Nathan-Webb/Kovacs](https://github.com/Nathan-Webb/Kovacs)", false);
+        event.reply(infoEmbed.build());
+
+    }
 }

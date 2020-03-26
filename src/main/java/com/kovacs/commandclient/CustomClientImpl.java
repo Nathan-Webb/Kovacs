@@ -46,7 +46,6 @@ public class CustomClientImpl extends CommandClientImpl {
            if(((MessageReceivedEvent) event).getAuthor().isBot()){
                return;
            }
-           String authorID = ((MessageReceivedEvent) event).getAuthor().getId();
            if(Config.cantUseBot(Objects.requireNonNull(((MessageReceivedEvent) event).getMember()))) { //user isn't whitelisted to use the bot - ignore command
                return;
            }

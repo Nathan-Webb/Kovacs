@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -24,22 +25,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddOwner extends Command {
-    public AddOwner() {
-        this.name = "AddOwner";
-        this.aliases = new String[]{"sudo"};
+public class RemoveSudo extends Command {
+    public RemoveSudo() {
+        this.name = "RemoveOwner";
+        this.aliases = new String[]{"rmsudo", "delsudo", "remsudo"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        List<Member> membersToWhitelist = event.getMessage().getMentionedMembers();
-
+        List<Member> membersToDesudo = event.getMessage().getMentionedMembers();
+        StringBuilder goodLookingString = new StringBuilder();
         List<String> members = new ArrayList<>();
-        membersToWhitelist.forEach(member -> members.add(member.getId()));
+        membersToDesudo.forEach(member -> {
+            String id = member.getId();
+            goodLookingString.append("<@").append(id).append(">, ");
+            members.add(id);
+        });
 
         try {
-            Config.addToList("sudo", members.toArray(new String[]{}));
+            Config.removeFromList("sudo", members.toArray(new String[]{}));
             event.reply(":thumbsup:");
+            Audit.log(this, event, "Sudo users added: " + goodLookingString.toString().replaceAll(", $", ""));
+
         }catch (IOException e){
             event.reply("IOException dummy");
         }

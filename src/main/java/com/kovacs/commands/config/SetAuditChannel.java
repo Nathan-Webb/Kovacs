@@ -20,31 +20,31 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
-public class AddDOS extends Command {
-    public AddDOS() {
-        this.name = "AddDOS";
-        this.aliases = new String[]{"dos"};
+public class SetAuditChannel extends Command {
+    public SetAuditChannel() {
+        this.name = "SetAuditChannel";
+        this.aliases = new String[]{};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
-
         try {
-            Config.addToList("dos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
-
-            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Delete-On-Sight list.");
-            Audit.log(this, event, "Delete-On-Sight words added: `" + Arrays.toString(words) + "`.");
-
-        }catch (IOException e){
-            event.reply("IOException dummy");
+            TextChannel textChannel = event.getMessage().getMentionedChannels().get(0);
+            String channelName = textChannel.getName();
+            String channelId = textChannel.getId();
+            try {
+                Config.setString("auditChannel", channelId);
+                event.reply(":thumbsup: Set `" + channelName + "` as the audit log channel!");
+                Audit.log(this, event, "Audit channel set to: `" + textChannel.getName() + "`");
+            } catch (IOException e) {
+                event.reply("IOException dummy.");
+            }
+        } catch (IndexOutOfBoundsException e){
+            event.reply("Provide a text channel!");
         }
     }
 }

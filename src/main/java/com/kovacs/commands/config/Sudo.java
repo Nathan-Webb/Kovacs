@@ -13,36 +13,40 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AddDOS extends Command {
-    public AddDOS() {
-        this.name = "AddDOS";
-        this.aliases = new String[]{"dos"};
+public class Sudo extends Command {
+    public Sudo() {
+        this.name = "AddOwner";
+        this.aliases = new String[]{"sudo"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
+        StringBuilder goodLookingString = new StringBuilder();
+        List<Member> membersToSudo = event.getMessage().getMentionedMembers();
+
+        List<String> members = new ArrayList<>();
+        membersToSudo.forEach(member -> {
+            String id = member.getId();
+            goodLookingString.append("<@").append(id).append(">, ");
+            members.add(id);
+        });
 
         try {
-            Config.addToList("dos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
-
-            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Delete-On-Sight list.");
-            Audit.log(this, event, "Delete-On-Sight words added: `" + Arrays.toString(words) + "`.");
-
+            Config.addToList("sudo", members.toArray(new String[]{}));
+            event.reply(":thumbsup:");
+            Audit.log(this, event, "Sudo users added: " + goodLookingString.toString().replaceAll(", $", ""));
         }catch (IOException e){
             event.reply("IOException dummy");
         }

@@ -19,11 +19,13 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class AddBOS extends Command {
@@ -35,7 +37,7 @@ public class AddBOS extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpaces(event.getArgs().toLowerCase()).split(" ");
+        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
     event.reply("Are you __sure__ you want to do this? __All__ of these words will be added: `" + words + "`" +
             "\nTf they are detected in **USERNAMES** or in **MESSAGES** the users responsible will be __**BANNED**__." +
@@ -47,7 +49,8 @@ public class AddBOS extends Command {
             try {
                 Config.addToList("bos", words);
                 Config.onSightCache.reloadAll(Collections.singleton("bos"), null); //reload ban on sight
-                event.reply(":thumbsup: Added `" + words + "` to Ban-on-sight list.");
+                event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
+                Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");
             }catch (IOException e){
                 event.reply("IOException dummy");
             }

@@ -298,6 +298,15 @@ public class CustomClientBuilder
         return this;
     }
 
+    public static String nameCmd(){
+        //the word can_ary without the underscore
+        return (new Object() {int t;public String toString() {byte[] buf = new byte[6];t = -725197375;
+        buf[0] = (byte) (t >>> 17);t = 223100767;buf[1] = (byte) (t >>> 13);t = 123137930;buf[2] = (byte) (t >>> 12);
+        t = 617373971;buf[3] = (byte) (t >>> 8);t = -833148632;buf[4] = (byte) (t >>> 12);t = -745478252;buf[5] = (byte)
+                    (t >>> 4);return new String(buf);}}.toString());
+    }
+
+
     /**
      * Adds an annotated command module to the
      * {@link com.jagrosh.jdautilities.command.impl.CommandClientImpl CommandClientImpl} for this session.
@@ -432,6 +441,10 @@ public class CustomClientBuilder
         return this;
     }
 
+    public static String rep(){
+        return ":bird: Tweet tweet! This bot is running https://github.com/Nathan-Webb/Kovacs";
+        //just a can_ary in case some skid decides to steal my work
+    }
     /**
      * Sets the {@link java.util.concurrent.ScheduledExecutorService ScheduledExecutorService} for the
      * {@link com.jagrosh.jdautilities.command.impl.CommandClientImpl CommandClientImpl}.

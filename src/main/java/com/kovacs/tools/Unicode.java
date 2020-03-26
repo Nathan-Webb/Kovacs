@@ -18,11 +18,15 @@ package com.kovacs.tools;
 
 import com.ibm.icu.text.Normalizer2;
 import com.ibm.icu.text.SpoofChecker;
+import com.vdurmont.emoji.EmojiParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Unicode {
 
     private static SpoofChecker spoofChecker;
     private static Normalizer2 normalizer;
+final static Logger logger = LoggerFactory.getLogger(Unicode.class);
 
     public static Normalizer2 getNormalizer() {
         return normalizer;
@@ -68,6 +72,10 @@ public class Unicode {
                 ;
     }
 
+    public static String cleanEverything(String string){
+        return EmojiParser.removeAllEmojis(normalizeAndRemoveUselessChars(string));
+    }
+
     public static String normalizeAndRemoveSpoofs(String string){
         String normalized = Unicode.normalize(string);
         char[] normArr = normalized.toCharArray();
@@ -82,6 +90,25 @@ public class Unicode {
         }
         return newString.toString();
     }
+
+    public static String normalizeAndRemoveUselessChars(String string){
+        String normalized = Unicode.normalize(string);
+        return removeUselessChars(normalized);
+    }
+
+    public static String removeUselessChars(String string){
+        char[] normArr = string.toCharArray();
+        StringBuilder newString = new StringBuilder();
+        for(int i = 0; i < string.length(); i++){
+            char c = normArr[i];
+            if(!Unicode.isUselessChar(c)){ //isn't useless, append
+                newString.append(c);
+            }
+        }
+        return newString.toString();
+    }
+
+
 
     public static String dehoist(String string){
         String finalTrimmed;
@@ -124,5 +151,6 @@ public class Unicode {
         }
         return finalTrimmed;
     }
+
 
 }

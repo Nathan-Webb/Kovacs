@@ -18,10 +18,12 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class AddMOS extends Command {
@@ -32,13 +34,15 @@ public class AddMOS extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpaces(event.getArgs().toLowerCase()).split(" ");
+        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
         try {
             Config.addToList("mos", words);
             Config.onSightCache.reloadAll(Collections.singleton("mos"), null); //reload mute on sight
 
-            event.reply(":thumbsup: Added `" + words + "` to Mute-On-Sight list.");
+            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Mute-On-Sight list.");
+            Audit.log(this, event, "Mute-On-Sight words added: `" + Arrays.toString(words) + "`.");
+
         }catch (IOException e){
             event.reply("IOException dummy");
         }

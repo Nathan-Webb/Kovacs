@@ -18,15 +18,30 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Config;
+import com.kovacs.tools.StringCleaning;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class RemoveDOS extends Command {
     public RemoveDOS() {
         this.name = "RemoveDOS";
-        this.aliases = new String[]{};
+        this.aliases = new String[]{"rdos"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
+        try {
+            Config.removeFromList("dos", words);
+            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
+
+            event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Delete-On-Sight list.");
+        }catch (IOException e){
+            event.reply("IOException dummy");
+        }
     }
 }

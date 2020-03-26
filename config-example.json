@@ -1,0 +1,25 @@
+{
+  "mutedRole": "",
+  "prefix": "your-prefix-here",
+  "whitelistedRoles": [],
+  "bos": [],
+  "dos": [],
+  "automod": [
+    "bos",
+    "mos",
+    "dos",
+    "dehoist",
+    "clean",
+    "janitor"
+  ],
+  "auditChannel": "",
+  "hoistFallback": "hoister",
+  "token": "your-token-here",
+  "mos": [],
+  "root": "your-id-here",
+  "activityMessage": "the server.",
+  "sudo": [""],
+  "activityType": "WATCHING",
+  "whitelistedUsers": [],
+  "enabledAutoMod": []
+}

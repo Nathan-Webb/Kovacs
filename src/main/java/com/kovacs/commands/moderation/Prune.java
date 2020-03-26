@@ -39,14 +39,6 @@ public class Prune extends Command {
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
     }
 
-    //indiscriminate prune is sudo only
-
-    //.p 170531778354741248 170531778354741248 170531778354741248 max
-    //.p 10
-    //.p max
-    //.p 170531778354741248 20
-    //.p <@3424234> 19
-    //.p <@3432432> <@d546456> all
     final static Logger logger = LoggerFactory.getLogger(Prune.class);
 
 //todo check if indiscriminate prune works without sudo

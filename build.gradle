@@ -25,6 +25,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation 'org.reflections:reflections:0.9.12'
     compile group: 'com.ibm.icu', name: 'icu4j', version: '66.1'
+    compile 'com.vdurmont:emoji-java:5.1.1'
+
 
 
 }

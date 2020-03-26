@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -37,16 +38,29 @@ public class Blacklist extends Command {
         List<Role> rolesToBlacklist = event.getMessage().getMentionedRoles();
         List<Member> membersToBlacklist = event.getMessage().getMentionedMembers();
 
+        StringBuilder goodLookingString = new StringBuilder();
         List<String> roles = new ArrayList<>();
-        rolesToBlacklist.forEach(role -> roles.add(role.getId()));
+        rolesToBlacklist.forEach(role -> {
+                    String id = role.getId();
+                    goodLookingString.append("<@&").append(id).append(">, ");
+                    roles.add(id);
+                }
+        );
 
         List<String> members = new ArrayList<>();
-        membersToBlacklist.forEach(member -> members.add(member.getId()));
+        membersToBlacklist.forEach(member -> {
+            String id = member.getId();
+            goodLookingString.append("<@").append(id).append(">, ");
+            members.add(id);
+        }
+        );
 
         try {
             Config.removeFromList("whitelistedRoles", roles.toArray(new String[]{}));
-            Config.removeFromList("whitelistedMembers", members.toArray(new String[]{}));
+            Config.removeFromList("whitelistedUsers", members.toArray(new String[]{}));
             event.reply(":thumbsup:");
+            Audit.log(this, event, "Users/Roles blacklisted: " + goodLookingString.toString().replaceFirst(", $", "") + ".");
+
         }catch (IOException e){
             event.reply("IOException dummy");
         }

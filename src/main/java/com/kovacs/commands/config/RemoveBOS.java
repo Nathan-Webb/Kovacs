@@ -18,15 +18,31 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Config;
+import com.kovacs.tools.StringCleaning;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class RemoveBOS extends Command {
     public RemoveBOS() {
         this.name = "RemoveBOS";
-        this.aliases = new String[]{};
+        this.aliases = new String[]{"rbos"};
+        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" "); //split based on
 
+        try {
+            Config.removeFromList("dos", words);
+            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
+
+            event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Mute-On-Sight list.");
+        }catch (IOException e){
+            event.reply("IOException dummy");
+        }
     }
 }

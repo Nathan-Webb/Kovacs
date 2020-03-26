@@ -13,35 +13,41 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
-import net.dv8tion.jda.api.entities.Member;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class RemoveOwner extends Command {
-    public RemoveOwner() {
-        this.name = "RemoveOwner";
-        this.aliases = new String[]{this.name.toLowerCase(), "remowner"};
+public class Sync extends Command {
+    public Sync() {
+        this.name = "Sync";
+        this.aliases = new String[]{"s"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        List<Member> membersToWhitelist = event.getMessage().getMentionedMembers();
-
-        List<String> members = new ArrayList<>();
-        membersToWhitelist.forEach(member -> members.add(member.getId()));
-
+        List<String> combined = new ArrayList<>();
+        combined.addAll(Config.onSightCache.get("mos"));
+        combined.addAll(Config.onSightCache.get("dos"));
         try {
-            Config.removeFromList("owners", members.toArray(new String[]{}));
-            event.reply(":thumbsup:");
-        }catch (IOException e){
+            Config.addToList("mos",  combined.toArray(new String[]{}));
+            Config.addToList("dos", combined.toArray(new String[]{}));
+            Set<String> toReload = new HashSet<>();
+            toReload.add("mos");
+            toReload.add("dos");
+            Config.onSightCache.reloadAll(toReload, null); //reload mute/delete on sight
+
+            event.reply(":thumbsup: Delete-on-Sight and Mute-On-Sight have been synced!");
+            Audit.log(this, event, "Delete-on-Sight and Mute-On-Sight synced.");
+        } catch (IOException e) {
             event.reply("IOException dummy");
         }
+
     }
 }

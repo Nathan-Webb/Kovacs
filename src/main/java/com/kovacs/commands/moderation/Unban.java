@@ -48,13 +48,13 @@ public class Unban extends Command {
 
         StringBuilder successFailure = new StringBuilder();
         if(banSuccess.size() > 0){
-            successFailure.append(":thumbsup: Unbanned the following ID's: " + banSuccess.toString()).append("\n");
+            successFailure.append(":thumbsup: Unbanned the following ID's: ").append(banSuccess.toString()).append("\n");
         } else {
             successFailure.append(":cry: No unbans were carried out!\n");
         }
 
         if(banFailures.size() > 0){
-            successFailure.append(":cry: The following unbans weren't carried out: " + banFailures.toString()).append("\n");
+            successFailure.append(":cry: The following unbans weren't carried out: ").append(banFailures.toString()).append("\n");
         }
         event.reply(successFailure.toString());
     }

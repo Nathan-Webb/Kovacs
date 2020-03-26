@@ -18,6 +18,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Role;
 
@@ -39,6 +40,7 @@ public class SetMutedRole extends Command {
             try {
                 Config.setString("mutedRole", roleID);
                 event.reply(":thumbsup: Set `" + roleName + "` as the muted role!");
+                Audit.log(this, event, "Muted role set to: `" + r.getName() + "`");
             } catch (IOException e) {
                 event.reply("IOException dummy.");
             }

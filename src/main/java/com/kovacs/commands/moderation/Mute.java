@@ -19,6 +19,7 @@ package com.kovacs.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Config;
+import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -34,11 +35,16 @@ public class Mute extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-
+        String reason = StringCleaning.removeAllMentions(event.getArgs());
+        event.getMessage().getMentionedMembers().forEach(member -> {
+            mute(member.getGuild(), member, reason);
+        });
+        event.reply(":thumbsup:");
     }
     public static void mute(Guild guild, Member member, String reason){
         guild.addRoleToMember(member,
                 Objects.requireNonNull(guild.getRoleById(Config.getString("mutedRole"))))
                 .reason(reason).queue();
     }
+
 }

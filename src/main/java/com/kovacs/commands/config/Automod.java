@@ -19,18 +19,25 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Config;
+import com.kovacs.tools.StringCleaning;
 
 import java.util.List;
 
 public class Automod extends Command {
     public Automod() {
         this.name = "Automod";
-        this.aliases = new String[]{};
+        this.aliases = new String[]{"am"};
         this.children = new Command[]{new AutomodDisable(), new AutomodEnable()};
     }
 
     @Override
     protected void execute(CommandEvent event) {
+
+        event.reply(getAutoModSettings());
+
+    }
+
+    public static String getAutoModSettings(){
         List<String> automodList = Config.getList("automod");
         List<String> enabledAutomod = Config.getList("enabledAutoMod");
         StringBuilder builder = new StringBuilder();
@@ -43,7 +50,6 @@ public class Automod extends Command {
             }
             builder.append("\n\n");
         }
-        event.reply(builder.toString());
-
+        return builder.toString();
     }
 }

@@ -77,7 +77,7 @@ public class Config {
 
 
     public static boolean isSudo(Member member){
-        return arrayContains("sudo", member.getId()) || getString("owner").equals(member.getId());
+        return arrayContains("sudo", member.getId()) || getString("root").equals(member.getId());
     }
 
 
@@ -87,7 +87,7 @@ public class Config {
     }
     public static boolean cantUseBot(Member member){
         String authorID = member.getId();
-        if(!Kovacs.config.getJSONArray("sudo").toList().contains(authorID) && !Kovacs.config.getString("owner").equals(authorID)){ //user isn't a bot owner
+        if(!Kovacs.config.getJSONArray("sudo").toList().contains(authorID) && !Kovacs.config.getString("root").equals(authorID)){ //user isn't a bot owner
             if(!Kovacs.config.getJSONArray("whitelistedUsers").toList().contains(authorID)){ //user isn't whitelisted
                 if(member.getRoles().stream()
                         .noneMatch(role -> Kovacs.config.getJSONArray("whitelistedRoles").toList().contains(role.getId()))){ //none of the users roles are whitelisted
