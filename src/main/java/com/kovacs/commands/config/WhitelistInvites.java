@@ -13,39 +13,36 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
-import net.dv8tion.jda.api.entities.Member;
+import com.kovacs.tools.StringCleaning;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
-public class RemoveSudo extends Command {
-    public RemoveSudo() {
-        this.name = "RemoveOwner";
-        this.aliases = new String[]{"rmsudo", "delsudo", "remsudo"};
+public class WhitelistInvites extends Command {
+    public WhitelistInvites() {
+        this.name = "WhitelistInvites";
+        this.aliases = new String[]{"WhitelistInvite", "wli", "wlinvite"};
+        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        List<Member> membersToDesudo = event.getMessage().getMentionedMembers();
-        StringBuilder goodLookingString = new StringBuilder();
-        List<String> members = new ArrayList<>();
-        membersToDesudo.forEach(member -> {
-            String id = member.getId();
-            goodLookingString.append("<@").append(id).append(">, ");
-            members.add(id);
-        });
+        String[] words = StringCleaning.removeUrlKeepInvite(
+                StringCleaning.normalizeSpacesClearCommas(event.getArgs())).split(" ");
 
         try {
-            Config.removeFromList("sudo", members.toArray(new String[]{}));
-            event.reply(":thumbsup:");
-            Audit.log(this, event, "Sudo users removed: " + goodLookingString.toString().replaceAll(", $", ""));
+            Config.addToList("whitelistedInvites", words);
+
+            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Whitelisted invites.");
+            Audit.log(this, event, "Whitelisted invites added: `" + Arrays.toString(words) + "`.");
 
         }catch (IOException e){
             event.reply("IOException dummy");

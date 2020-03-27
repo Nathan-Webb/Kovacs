@@ -27,6 +27,10 @@ public class StringCleaning {
         return s.replaceAll(" +", " "); //any spaces more than 1 will be replaced with one space
     }
 
+    public static String removeUrlKeepInvite(String s){
+        return s.replaceAll("(https?://)?(www\\.)?((discord|invite)\\.(gg|li|me|io)|discordapp\\.co/invite)/", "");
+    }
+
     public static String normalizeSpacesClearCommas(String s){
         return clearCommas(normalizeSpaces(s));
     }

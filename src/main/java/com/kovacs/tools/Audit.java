@@ -35,7 +35,7 @@ public class Audit {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(command.getName()).setColor(Color.ORANGE);
         builder.setDescription(phrase);
-        builder.setAuthor(commandEvent.getAuthor().getAsTag(), commandEvent.getAuthor().getEffectiveAvatarUrl());
+        builder.setFooter(commandEvent.getAuthor().getAsTag(), commandEvent.getAuthor().getEffectiveAvatarUrl());
         assert channel != null;
         channel.sendMessage(builder.build()).queue();
     }
@@ -52,7 +52,7 @@ public class Audit {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(title).setColor(Color.ORANGE);
         builder.setDescription(phrase);
-        builder.setAuthor(author, avatarUrl);
+        builder.setFooter(author, avatarUrl);
         assert channel != null;
         channel.sendMessage(builder.build()).queue();
     }

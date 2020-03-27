@@ -17,13 +17,17 @@
 package com.kovacs.listeners;
 
 import com.kovacs.tools.Config;
+import com.kovacs.tools.StringCleaning;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Message;
 import com.kovacs.commandclient.CustomClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class AutoModder {
 final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
@@ -62,7 +66,6 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
     }
 
     public static AutoModResponse dehoistOnSight(String toCheck){
-        logger.debug(toCheck);
         String dehoisted = Unicode.dehoist(toCheck);
         logger.debug(dehoisted);
         if(!dehoisted.equalsIgnoreCase(toCheck)){ //strings are different - dehoisted
@@ -71,11 +74,30 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "dehoist");
     }
 
+    //invite regex gracefully provided by ravy#0001
+    public static AutoModResponse invites(String s){
+        Pattern pattern = Pattern.compile("(https?://)?(www\\.)?((discord|invite)\\.(gg|li|me|io)|discordapp\\.com/invite)/(\\s)?.+");
+        Matcher matcher = pattern.matcher(s);
+        List<String> foundInvites = new ArrayList<>();
+        while (matcher.find()){
+            foundInvites.add(matcher.group());
+            logger.debug(matcher.group());
+        }
+        foundInvites.removeIf(foundInvite -> Config.getList("whitelistedInvites").stream()
+                .anyMatch(whitelistedInvite -> whitelistedInvite.equalsIgnoreCase(StringCleaning.removeUrlKeepInvite(foundInvite))));
+        if(foundInvites.size() > 0) {
+                return new AutoModResponse("", AutoModActions.INVITES, foundInvites.toString(), "invites");
+        }
+        return new AutoModResponse("", AutoModActions.NOTHING, "", "invites");
+
+    }
+
     //-------------------------String Scanners---------------------------------
 
 
 
     //-------------------------Message Scanners--------------------------------
+
 
     public static AutoModResponse deleteOnSight(Message m){
         List<String> badWords = Config.onSightCache.get("dos");
@@ -87,29 +109,6 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         }
          return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "dos");
     }
-
-    public static AutoModResponse banOnSight(Message m){
-        List<String> badWords = Config.onSightCache.get("bos");
-        String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
-        for(String word : badWords){
-            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
-                return new AutoModResponse(m.getContentRaw(), AutoModActions.BAN, word, "bos");
-            }
-        }
-        return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "bos");
-    }
-
-    public static AutoModResponse muteOnSight(Message m){
-        List<String> badWords = Config.onSightCache.get("mos");
-        String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
-        for(String word : badWords){
-            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
-                return new AutoModResponse(m.getContentRaw(), AutoModActions.MUTE, word, "mos");
-            }
-        }
-        return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "mos");
-    }
-
 
     //-------------------------Message Scanners--------------------------------
 

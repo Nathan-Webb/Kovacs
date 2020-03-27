@@ -135,7 +135,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         boolean botherWithRight = true;
         if(trimmedLeft.equals("")){ //very bad hoister
             botherWithRight = false; //dont even bother with that reverse loop
-            finalTrimmed = Config.getString("hoistFallback");
+            finalTrimmed = Config.getString("nameFallback");
         } else {
             finalTrimmed = trimmedLeft;
         }

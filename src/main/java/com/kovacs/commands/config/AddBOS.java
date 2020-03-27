@@ -46,16 +46,13 @@ final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
     event.reply("Are you __sure__ you want to do this? __All__ of these words will be added: `" + Arrays.toString(words) + "`" +
             "\nTf they are detected in **USERNAMES** or in **MESSAGES** the users responsible will be __**BANNED**__." +
             "\n If you are sure, then respond with `yes`.");
-    //todo why the fuck is the eventwaiter not working - is discord dying?
+
     Kovacs.waiter.waitForEvent(MessageReceivedEvent.class,
-            check -> check.getAuthor().equals(event.getMember().getUser()) && check.getChannel().equals(event.getChannel()) && !check.getMessage().equals(event.getMessage()),
+            check ->  check.getAuthor().equals(event.getMember().getUser()) && check.getChannel().equals(event.getChannel()) && !check.getMessage().equals(event.getMessage()),
             response -> {
-        logger.debug(response.getMessage().getContentDisplay());
         if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
             try {
-                logger.debug("aaaaaaaaaa");
                 Config.addToList("bos", words);
-                logger.debug("bbbbbbbbb");
                 Config.onSightCache.reloadAll(Collections.singleton("bos"), null); //reload ban on sight
                 event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
                 Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");

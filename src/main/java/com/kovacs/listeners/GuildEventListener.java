@@ -33,12 +33,14 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
 
      @Override
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-
+         if(event.getUser().isBot()){
+             return;
+         }
          NameEventListener.scanName(event.getMember(), event.getMember().getEffectiveName());
     }
 
     @Override
-    public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event) {
+    public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event) { //not filtering bots because sometimes they can leave invites lying around
         if(Config.canUseBot(event.getMember()) && !Config.arrayContains("enabledAutoMod", "janitor")){
             return;
         }

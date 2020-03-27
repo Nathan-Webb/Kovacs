@@ -18,6 +18,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
@@ -28,7 +29,7 @@ import java.util.Collections;
 public class RemoveBOS extends Command {
     public RemoveBOS() {
         this.name = "RemoveBOS";
-        this.aliases = new String[]{"rbos"};
+        this.aliases = new String[]{"rbos", "rmbos"};
         this.ownerCommand = true;
     }
 
@@ -41,6 +42,8 @@ public class RemoveBOS extends Command {
             Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
 
             event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Mute-On-Sight list.");
+            Audit.log(this, event, "Ban-On-Sight words removed: `" + Arrays.toString(words) + "`.");
+
         }catch (IOException e){
             event.reply("IOException dummy");
         }

@@ -17,5 +17,5 @@
 package com.kovacs.listeners;
 
 public enum AutoModActions {
-    BAN, MUTE, DELETE, DEHOIST, CLEAN, NOTHING
+    BAN, MUTE, DELETE, DEHOIST, CLEAN, NOTHING, INVITES
 }

@@ -39,7 +39,6 @@ import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static net.dv8tion.jda.api.entities.Activity.*;
 
@@ -61,7 +60,7 @@ public class Kovacs {
         Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new Sudo(),
                 new RemoveBOS(), new Blacklist(), new ReloadConfig(), new AutoMod(), new SetAuditChannel(),
                 new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
-                new Automod(), new RemoveDOS(), new RemoveMOS()};
+                new Automod(), new RemoveDOS(), new RemoveMOS(), new WhitelistInvites(), new BlackistInvites()};
 
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
                 new ManageNicks()};
@@ -82,7 +81,7 @@ public class Kovacs {
                 .build();
 
         bot = new JDABuilder(AccountType.BOT)
-                .addEventListeners(commandClient, new EventListener(), new GuildEventListener(), new MessageEventListener(), new NameEventListener())
+                .addEventListeners(commandClient, new EventListener(), new GuildEventListener(), new MessageEventListener(), new NameEventListener(), waiter)
                 .setToken(config.getString("token"))
                 .setGuildSubscriptionsEnabled(true)
                 .build();

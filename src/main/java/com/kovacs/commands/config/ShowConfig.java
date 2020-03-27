@@ -43,6 +43,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String[] bos = Config.onSightCache.get("bos").toArray(new String[]{});
         String[] whiteListedUsers = Config.getList("whitelistedUsers").toArray(new String[]{});
         String[] whiteListedRoles = Config.getList("whitelistedRoles").toArray(new String[]{});
+        String[] whitelistedInvites = Config.getList("whitelistedInvites").toArray(new String[]{});
         String[] sudoUsers = Config.getList("sudo").toArray(new String[]{});
         String root = Config.getString("root");
 
@@ -63,6 +64,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         for(String id : sudoUsers){
             sudoBuilder.append(", ").append("<@!").append(id).append(">");
         }
+
         String mentionedUsers = userBuilder.toString().replaceFirst(", ", "");
         String mentionedRoles = rolebuilder.toString().replaceFirst(", ", "");
         String mentionedSudo  = sudoBuilder.toString().replaceFirst(", ", "");
@@ -70,10 +72,12 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String dosStr =  Arrays.deepToString(dos).replaceAll("[\\[\\]]", "");
         String mosStr =  Arrays.deepToString(mos).replaceAll("[\\[\\]]", "");
         String bosStr =  Arrays.deepToString(bos).replaceAll("[\\[\\]]", "");
+        String inviteStr =  Arrays.deepToString(whitelistedInvites).replaceAll("[\\[\\]]", "");
         builder.addField("Root", "<@" + root + ">", true)
                 .addField("Sudo", (mentionedSudo.equals("") ? "None" : mentionedSudo), true)
                 .addField("Whitelisted Users", (mentionedUsers.equals("") ? "None" : mentionedUsers), true)
                 .addField("Whitelisted Roles", (mentionedRoles.equals("") ? "None" : mentionedRoles), true)
+                .addField("Whitelisted Invites", (inviteStr.equals("") ? "None" : inviteStr), true)
                 .addField("Delete-on-sight", (dosStr.equals("") ? "None" : dosStr), false)
                 .addField("Mute-on-sight", (mosStr.equals("") ? "None" : mosStr), true)
                 .addField("Ban-on-sight", (bosStr.equals("") ? "None" : bosStr), true)

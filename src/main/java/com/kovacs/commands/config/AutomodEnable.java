@@ -29,7 +29,7 @@ import java.util.List;
 public class AutomodEnable extends Command {
     public AutomodEnable() {
         this.name = "AutomodEnable";
-        this.aliases = new String[]{"enable"};
+        this.aliases = new String[]{"enable", "add"};
         this.ownerCommand = true;
     }
 

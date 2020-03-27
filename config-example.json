@@ -1,6 +1,6 @@
 {
   "mutedRole": "",
-  "prefix": "your-prefix-here",
+  "prefix": ".",
   "whitelistedRoles": [],
   "bos": [],
   "dos": [],
@@ -10,16 +10,25 @@
     "dos",
     "dehoist",
     "normalize",
-    "janitor"
+    "janitor",
+    "invites",
+    "duplicates"
   ],
-  "auditChannel": "",
-  "hoistFallback": "hoister",
+  "auditChannel": "693099708503294023",
   "token": "your-token-here",
   "mos": [],
+  "inviteName": "naughty person",
+  "nameFallback": "fallback",
   "root": "your-id-here",
   "activityMessage": "the server.",
-  "sudo": [""],
+  "sudo": [],
   "activityType": "WATCHING",
   "whitelistedUsers": [],
-  "enabledAutoMod": []
+  "enabledAutoMod": [
+    "dehoist",
+    "normalize",
+    "invites"
+  ],
+  "whitelistedInvites": [],
+  "duplicateThreshold": 4
 }

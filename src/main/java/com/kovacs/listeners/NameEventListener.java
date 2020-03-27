@@ -29,15 +29,22 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class NameEventListener extends ListenerAdapter {
     final static Logger logger = LoggerFactory.getLogger(NameEventListener.class);
 
-    //todo this isn't working
     @Override
     public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent event) {
-        scanName(event.getMember(), event.getNewNickname());
+        if(event.getUser().isBot()){
+            return;
+        }
+
+        String name = event.getNewNickname();
+        if(name == null){
+            name = event.getEntity().getEffectiveName();
+        }
+
+        scanName(event.getMember(), name);
 
     }
 
@@ -45,13 +52,14 @@ public class NameEventListener extends ListenerAdapter {
     @Override
     public void onUserUpdateName(@Nonnull UserUpdateNameEvent event) {
         Member member = event.getJDA().getMutualGuilds(event.getUser()).get(0).getMember(event.getUser());
+        assert member != null;
         scanName(member, event.getNewName());
     }
 
     static void scanName(Member member, String name){
+
         if(Config.canUseBot(member)){
-            //todo remove this
-            //return;
+            return;
         }
 
         List<AutoModResponse> responses = new ArrayList<>();
@@ -64,11 +72,15 @@ public class NameEventListener extends ListenerAdapter {
             responses.add(AutoModder.muteOnSight(name));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "clean")){
+        if(Config.arrayContains("enabledAutoMod", "normalize")){
             responses.add(AutoModder.cleanOnSight(name));
         }
         if(Config.arrayContains("enabledAutoMod", "dehoist")){
             responses.add(AutoModder.dehoistOnSight(name));
+        }
+
+        if(Config.arrayContains("enabledAutoMod", "invites")){
+            responses.add(AutoModder.invites(name));
         }
 
 
@@ -76,6 +88,8 @@ public class NameEventListener extends ListenerAdapter {
         boolean mute = responses.stream().anyMatch(resp -> resp.getModerationAction().equals(AutoModActions.MUTE));
         boolean clean = responses.stream().anyMatch(resp -> resp.getModerationAction().equals(AutoModActions.CLEAN));
         boolean dehoist = responses.stream().anyMatch(resp -> resp.getModerationAction().equals(AutoModActions.DEHOIST));
+        boolean invites  = responses.stream().anyMatch(resp -> resp.getModerationAction().equals(AutoModActions.INVITES));
+
         if(ban){ //need to ban - dont bother looking for mute / clean
             logger.debug("Ban triggered.");
             AutoModResponse banResp = null;
@@ -113,6 +127,7 @@ public class NameEventListener extends ListenerAdapter {
                             "\nUser: " + member.getAsMention() +
                             "\nName: " + name);
         }
+
         AutoModResponse cleanResp = null;
         AutoModResponse dehoistResp = null;
         for(AutoModResponse response : responses){
@@ -128,7 +143,7 @@ public class NameEventListener extends ListenerAdapter {
                 break;
             }
         }
-        if(cleanResp == null || dehoistResp == null){
+        if(cleanResp == null && dehoistResp == null){
             return;
         }
 
@@ -146,6 +161,7 @@ public class NameEventListener extends ListenerAdapter {
         } else if(clean){ //only one was true, was it clean?
             logger.debug("Clean triggered.");
 
+            assert cleanResp != null;
             String newName = cleanResp.getModeratedString();
             member.modifyNickname(newName).queue();
             Audit.log(member.getJDA(), "Clean triggered.", member.getJDA().getSelfUser().getAsTag(),
@@ -155,12 +171,50 @@ public class NameEventListener extends ListenerAdapter {
 
         } else if(dehoist){//guess not, is it dehoist?
             logger.debug("Dehoist triggered.");
+            assert dehoistResp != null;
             String newName = dehoistResp.getModeratedString();
+            if(invites){ //hoisting with an invite - not nice
+                newName = Config.getString("inviteName");
+                if (inviteKickBan(member, name, newName)){
+                    return;
+                }
+            }
             member.modifyNickname(newName).queue();
             Audit.log(member.getJDA(), "Dehoist triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
 
-        } //all done!
+        } else if(invites) {
+            logger.debug("Invites Triggered");
+            String newName = Config.getString("inviteName");
+            if (inviteKickBan(member, name, newName)){
+                return;
+            }
+            member.modifyNickname(Config.getString("inviteName")).queue();
+            Audit.log(member.getJDA(), "Anti-Invite triggered.", member.getJDA().getSelfUser().getAsTag(),
+                    member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
+                            "\nName: " + name);
+
+        }
     }
+
+    private static boolean inviteKickBan(Member member, String name, String newName) {
+        if(newName.equalsIgnoreCase("ban")){
+            logger.debug("ban invite");
+            member.ban(0, "Anti-Invite ban triggered.").queue();
+            Audit.log(member.getJDA(), "Anti-Invite ban triggered.", member.getJDA().getSelfUser().getAsTag(),
+                    member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
+                            "\nName: " + name);
+            return true;
+        } else if(newName.equalsIgnoreCase("kick")){ //gotta kick the user
+            logger.debug("kick invite");
+            member.kick("Anti-Invite kick triggered.").queue();
+            Audit.log(member.getJDA(), "Anti-Invite kick triggered.", member.getJDA().getSelfUser().getAsTag(),
+                    member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
+                            "\nName: " + name);
+            return true;
+        }
+        return false;
+    }
+
 }

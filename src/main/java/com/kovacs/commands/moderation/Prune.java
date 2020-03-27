@@ -42,7 +42,6 @@ public class Prune extends Command {
 
     final static Logger logger = LoggerFactory.getLogger(Prune.class);
 
-//todo check if indiscriminate prune works without sudo
     @Override
     protected void execute(CommandEvent event) {
         String args = event.getArgs();

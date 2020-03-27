@@ -36,15 +36,12 @@ public class ManageNicks extends Command {
 
     final static Logger logger = LoggerFactory.getLogger(ManageNicks.class);
 
-    //todo this command needs fixing
     @Override
     protected void execute(CommandEvent event) {
-        logger.debug(event.getArgs().toLowerCase());
         String thingToDo = StringCleaning.removeAllMentions(event.getArgs()).toLowerCase().trim();
 
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
         if(mentionedMembers.size() == 0){
-            logger.debug("No mentioned members");
             mentionedMembers = event.getGuild().getMembers();
         }
         if(!thingToDo.equals("dehoist") && !thingToDo.equals("normalize") && !thingToDo.equals("clean")){
@@ -55,13 +52,10 @@ public class ManageNicks extends Command {
         int count = 0;
         for(Member member : mentionedMembers){
             String name = member.getEffectiveName();
-            logger.debug("Scanning: " + name);
             if(Unicode.isHoisting(name) && (thingToDo.equals("dehoist") || thingToDo.equals("clean"))){ //is dehoisting and we are dehoisting as a selected option
                 name = Unicode.dehoist(name);
-                logger.debug("dehoisting: " + name);
             } else if(thingToDo.equals("normalize") || thingToDo.equals("clean")) {
                 name = Unicode.cleanEverything(name);
-                logger.debug("normalizing: " + name);
             }
             if(!name.equalsIgnoreCase(member.getEffectiveName())){ //ended up with different name
                 if(event.getSelfMember().canInteract(member)){

@@ -16,21 +16,25 @@
 package com.kovacs.listeners;
 
 import com.kovacs.commands.moderation.Mute;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.guild.member.GenericGuildMemberEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 
 public class EventListener extends ListenerAdapter {
@@ -41,7 +45,21 @@ public class EventListener extends ListenerAdapter {
         logger.debug("Bot ready!");
     }
 
+    @Override
+    public void onRoleDelete(@Nonnull RoleDeleteEvent event) {
+        if(event.getRole().getId().equalsIgnoreCase(Config.getString("mutedRole"))){
+            Audit.log(event.getJDA(), "Warning!", event.getJDA().getSelfUser().getAsTag(), event.getJDA().getSelfUser().getAvatarUrl(),
+                    "The muted role has been deleted! Please set a new one!");
+        }
+    }
 
+    @Override
+    public void onTextChannelDelete(@Nonnull TextChannelDeleteEvent event) {
+        if(event.getChannel().getId().equalsIgnoreCase(Config.getString("auditChannel"))){
+            Objects.requireNonNull(event.getGuild().getOwner()).getUser().openPrivateChannel().queue(privateChannel ->
+                    privateChannel.sendMessage("**Warning!**" +
+                            "\nThe audit channel has been deleted! Please set a new one!").queue());
+        }
 
-
+    }
 }
