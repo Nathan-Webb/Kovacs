@@ -46,8 +46,12 @@ public class Mute extends Command {
         Audit.log(this, event, "Muted the following users: " + fancyString.toString() + ".");
     }
     public static void mute(Guild guild, Member member, String reason){
+        String mutedRole = Config.getString("mutedRole");
+        if(mutedRole.equalsIgnoreCase("")){
+            return;
+        }
         guild.addRoleToMember(member,
-                Objects.requireNonNull(guild.getRoleById(Config.getString("mutedRole"))))
+                Objects.requireNonNull(guild.getRoleById(mutedRole)))
                 .reason(reason).queue();
     }
 

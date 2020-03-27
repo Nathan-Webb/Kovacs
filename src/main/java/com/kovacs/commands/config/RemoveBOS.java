@@ -38,10 +38,10 @@ public class RemoveBOS extends Command {
         String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" "); //split based on
 
         try {
-            Config.removeFromList("dos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
+            Config.removeFromList("bos", words);
+            Config.onSightCache.reloadAll(Collections.singleton("bos"), null); //reload delete on sight
 
-            event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Mute-On-Sight list.");
+            event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Ban-On-Sight list.");
             Audit.log(this, event, "Ban-On-Sight words removed: `" + Arrays.toString(words) + "`.");
 
         }catch (IOException e){

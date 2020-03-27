@@ -48,12 +48,16 @@ public class NameEventListener extends ListenerAdapter {
 
     }
 
-    //warning: this is fucked if you have it in more than 2/3 guilds
+    //warning: this is not good if you have it in more than 2/3 guilds
     @Override
     public void onUserUpdateName(@Nonnull UserUpdateNameEvent event) {
-        Member member = event.getJDA().getMutualGuilds(event.getUser()).get(0).getMember(event.getUser());
-        assert member != null;
-        scanName(member, event.getNewName());
+        event.getJDA().getMutualGuilds(event.getUser()).forEach(guild -> {
+                Member member = guild.getMember(event.getUser());
+                    assert member != null;
+                    scanName(member, event.getNewName());
+        }
+        );
+
     }
 
     static void scanName(Member member, String name){
@@ -200,14 +204,12 @@ public class NameEventListener extends ListenerAdapter {
 
     private static boolean inviteKickBan(Member member, String name, String newName) {
         if(newName.equalsIgnoreCase("ban")){
-            logger.debug("ban invite");
             member.ban(0, "Anti-Invite ban triggered.").queue();
             Audit.log(member.getJDA(), "Anti-Invite ban triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
             return true;
         } else if(newName.equalsIgnoreCase("kick")){ //gotta kick the user
-            logger.debug("kick invite");
             member.kick("Anti-Invite kick triggered.").queue();
             Audit.log(member.getJDA(), "Anti-Invite kick triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +

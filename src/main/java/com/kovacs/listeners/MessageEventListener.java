@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MessageEventListener  extends ListenerAdapter {
@@ -130,10 +131,28 @@ public class MessageEventListener  extends ListenerAdapter {
             AutoModResponse inviteResp = getResponse(responses, "invites");
             message.delete().queue();
 
-            Audit.log(message.getJDA(), "Invite deletion triggered.", message.getJDA().getSelfUser().getAsTag(),
-                    message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
-                            "\nUser: " + message.getAuthor().getAsMention() +
-                            "\nMessage: " + message.getContentRaw());
+            String action = Config.getString("inviteName");
+            if(action.equalsIgnoreCase("ban")){
+                Objects.requireNonNull(message.getMember()).ban(0).reason("Invite Kick Triggered").queue();
+                Audit.log(message.getJDA(), "Invite deletion + Ban  triggered.", message.getJDA().getSelfUser().getAsTag(),
+                        message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
+                                "\nUser: " + message.getAuthor().getAsMention() +
+                                "\nMessage: " + message.getContentRaw());
+
+            } else if (action.equalsIgnoreCase("kick")){
+                Objects.requireNonNull(message.getMember()).kick().reason("Invite Kick Triggered").queue();
+                Audit.log(message.getJDA(), "Invite deletion + Kick  triggered.", message.getJDA().getSelfUser().getAsTag(),
+                        message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
+                                "\nUser: " + message.getAuthor().getAsMention() +
+                                "\nMessage: " + message.getContentRaw());
+            } else {
+                Audit.log(message.getJDA(), "Invite deletion triggered.", message.getJDA().getSelfUser().getAsTag(),
+                        message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
+                                "\nUser: " + message.getAuthor().getAsMention() +
+                                "\nMessage: " + message.getContentRaw());
+            }
+
+
         }
     }
 

@@ -40,8 +40,7 @@ public class Test extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        //normalize, then scrape useless char
-        event.reply(Boolean.toString(Unicode.isUselessChar('❎')));
+        event.reply("test");
     }
 
 }

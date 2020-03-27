@@ -62,7 +62,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
             //33-64 91-96 123-126
     }
 
-    public static boolean isUselessChar(Character c){
+    public static boolean isUnmentionableChar(Character c){
         return (160 <= (int) c && (int) c <= 191) //latin punctuation
                 || (384 <= (int) c && (int) c <= 451) //not-european & historic latin + african clicks
                 || (477 <= (int) c && (int) c <= 505) //phonetic and historic letters sans WGL4
@@ -82,7 +82,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         StringBuilder newString = new StringBuilder();
         for(int i = 0; i < normalized.length(); i++){
             char c = normArr[i];
-            if(Unicode.isUselessChar(c)){
+            if(Unicode.isUnmentionableChar(c)){
                 newString.append(Unicode.getSpoofChecker().getSkeleton(String.valueOf(c)));
             } else {
                 newString.append(c);
@@ -101,7 +101,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         StringBuilder newString = new StringBuilder();
         for(int i = 0; i < string.length(); i++){
             char c = normArr[i];
-            if(!Unicode.isUselessChar(c)){ //isn't useless, append
+            if(!Unicode.isUnmentionableChar(c)){ //isn't useless, append
                 newString.append(c);
             }
         }
@@ -135,7 +135,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         boolean botherWithRight = true;
         if(trimmedLeft.equals("")){ //very bad hoister
             botherWithRight = false; //dont even bother with that reverse loop
-            finalTrimmed = Config.getString("nameFallback");
+            finalTrimmed = Config.getString("fallbackName");
         } else {
             finalTrimmed = trimmedLeft;
         }

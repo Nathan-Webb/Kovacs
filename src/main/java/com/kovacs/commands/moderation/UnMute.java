@@ -49,8 +49,12 @@ public class UnMute extends Command {
     }
 
     public static void unMute(Guild guild, Member member, String reason){
+        String mutedRole = Config.getString("mutedRole");
+        if(mutedRole.equalsIgnoreCase("")){
+            return;
+        }
         guild.removeRoleFromMember(member,
-                Objects.requireNonNull(guild.getRoleById(Config.getString("mutedRole"))))
+                Objects.requireNonNull(guild.getRoleById(mutedRole)))
                 .reason(reason).queue();
     }
 }
