@@ -9,7 +9,7 @@
     "mos",
     "dos",
     "dehoist",
-    "clean",
+    "normalize",
     "janitor"
   ],
   "auditChannel": "",

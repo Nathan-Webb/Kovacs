@@ -18,6 +18,7 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -60,16 +61,22 @@ public class Ban extends Command {
         }
 
         StringBuilder successFailure = new StringBuilder();
+        boolean sendAudit = false;
         if(banSuccess.size() > 0){
-            successFailure.append(":thumbsup: Banned the following ID's: " + banSuccess.toString()).append("\n");
+            successFailure.append("Banned the following ID's: ").append(banSuccess.toString()).append("\n");
+            sendAudit = true;
         } else {
-            successFailure.append(":cry: No bans were carried out!\n");
+            successFailure.append("No bans were carried out!\n");
         }
 
         if(banFailures.size() > 0){
-            successFailure.append(":cry: The following bans weren't carried out: " + banFailures.toString()).append("\n");
+            successFailure.append("The following bans weren't carried out: ").append(banFailures.toString()).append("\n");
         }
         event.reply(successFailure.toString());
+
+        if(sendAudit){
+            Audit.log(this, event, successFailure.toString());
+        }
 
     }
 }

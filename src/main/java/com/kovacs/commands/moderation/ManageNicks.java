@@ -18,16 +18,64 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
+import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Unicode;
+import net.dv8tion.jda.api.entities.Member;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class ManageNicks extends Command {
     public ManageNicks() {
         this.name = "ManageNicks";
-        this.aliases = new String[]{};
+        this.aliases = new String[]{"nicks", "nick"};
+        this.ownerCommand = true;
     }
 
+    final static Logger logger = LoggerFactory.getLogger(ManageNicks.class);
+
+    //todo this command needs fixing
     @Override
     protected void execute(CommandEvent event) {
+        logger.debug(event.getArgs().toLowerCase());
+        String thingToDo = StringCleaning.removeAllMentions(event.getArgs()).toLowerCase().trim();
 
+        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        if(mentionedMembers.size() == 0){
+            logger.debug("No mentioned members");
+            mentionedMembers = event.getGuild().getMembers();
+        }
+        if(!thingToDo.equals("dehoist") && !thingToDo.equals("normalize") && !thingToDo.equals("clean")){
+            event.reply("You must provide either `dehoist`, `normalize`, or `clean`");
+            return;
+        }
 
+        int count = 0;
+        for(Member member : mentionedMembers){
+            String name = member.getEffectiveName();
+            logger.debug("Scanning: " + name);
+            if(Unicode.isHoisting(name) && (thingToDo.equals("dehoist") || thingToDo.equals("clean"))){ //is dehoisting and we are dehoisting as a selected option
+                name = Unicode.dehoist(name);
+                logger.debug("dehoisting: " + name);
+            } else if(thingToDo.equals("normalize") || thingToDo.equals("clean")) {
+                name = Unicode.cleanEverything(name);
+                logger.debug("normalizing: " + name);
+            }
+            if(!name.equalsIgnoreCase(member.getEffectiveName())){ //ended up with different name
+                if(event.getSelfMember().canInteract(member)){
+                    member.modifyNickname(name).queue();
+                    try{
+                        Thread.sleep(500);
+                    } catch (InterruptedException e){
+                        //do nothing
+                    }
+                    count++;
+                }
+            }
+        }
+        event.reply("Changed the nicknames of " + count + " users!");
+        Audit.log(this, event, "Managed the nicknames of `" + count + "` members. Action: `" + thingToDo + "`.");
     }
 }

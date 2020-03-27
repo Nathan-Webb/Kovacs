@@ -23,10 +23,13 @@ import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public class AddBOS extends Command {
     public AddBOS() {
@@ -34,20 +37,25 @@ public class AddBOS extends Command {
         this.aliases = new String[]{"bos"};
         this.ownerCommand = true;
     }
+final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
 
     @Override
     protected void execute(CommandEvent event) {
         String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
-    event.reply("Are you __sure__ you want to do this? __All__ of these words will be added: `" + words + "`" +
+    event.reply("Are you __sure__ you want to do this? __All__ of these words will be added: `" + Arrays.toString(words) + "`" +
             "\nTf they are detected in **USERNAMES** or in **MESSAGES** the users responsible will be __**BANNED**__." +
             "\n If you are sure, then respond with `yes`.");
+    //todo why the fuck is the eventwaiter not working - is discord dying?
     Kovacs.waiter.waitForEvent(MessageReceivedEvent.class,
             check -> check.getAuthor().equals(event.getMember().getUser()) && check.getChannel().equals(event.getChannel()) && !check.getMessage().equals(event.getMessage()),
             response -> {
+        logger.debug(response.getMessage().getContentDisplay());
         if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
             try {
+                logger.debug("aaaaaaaaaa");
                 Config.addToList("bos", words);
+                logger.debug("bbbbbbbbb");
                 Config.onSightCache.reloadAll(Collections.singleton("bos"), null); //reload ban on sight
                 event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
                 Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");
@@ -57,7 +65,7 @@ public class AddBOS extends Command {
         } else {
             event.reply("Response was not a `yes`.\n__Not__ adding to Ban-on-sight list!");
         }
-    });
+    },1, TimeUnit.MINUTES, () -> event.reply("Sorry, you took too long! Command failed"));
 
 
     }

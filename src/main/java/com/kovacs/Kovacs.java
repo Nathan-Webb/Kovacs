@@ -24,8 +24,7 @@ import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
-import com.kovacs.listeners.AutoMod;
-import com.kovacs.listeners.EventListener;
+import com.kovacs.listeners.*;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.AccountType;
@@ -38,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static net.dv8tion.jda.api.entities.Activity.*;
@@ -47,13 +48,12 @@ public class Kovacs {
     public static JSONObject config;
     public static JDA bot;
     public static EventWaiter waiter;
-    /*
-    todo: on sight stuff, audit log, command to dehoist/clean all/select members, add to unicode dictionary?
-    //make example config
-     */
+    private static ScheduledExecutorService eventWaiterScheduler = Executors.newScheduledThreadPool(1);
+
+
     public static void main(String[] args) throws LoginException, IOException {
         config = Config.open();
-        waiter = new EventWaiter(new ScheduledThreadPoolExecutor(1), true);
+        waiter = new EventWaiter(eventWaiterScheduler, false);
         SpoofChecker checker = new SpoofChecker.Builder().setChecks(SpoofChecker.CONFUSABLE).build();
         Unicode.setNormalizer(Normalizer2.getNFKCInstance());
         Unicode.setSpoofChecker(checker);
@@ -63,7 +63,8 @@ public class Kovacs {
                 new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
                 new Automod(), new RemoveDOS(), new RemoveMOS()};
 
-        Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune()};
+        Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
+                new ManageNicks()};
 
         Command[] generic = new Command[]{new Ping(), new Test(), new Normalize(), new Help(), new Info()};
 
@@ -81,8 +82,9 @@ public class Kovacs {
                 .build();
 
         bot = new JDABuilder(AccountType.BOT)
-                .addEventListeners(new EventListener(), commandClient)
+                .addEventListeners(commandClient, new EventListener(), new GuildEventListener(), new MessageEventListener(), new NameEventListener())
                 .setToken(config.getString("token"))
+                .setGuildSubscriptionsEnabled(true)
                 .build();
     }
 }

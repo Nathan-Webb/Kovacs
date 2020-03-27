@@ -22,6 +22,8 @@ import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Config {
+    final static Logger logger = LoggerFactory.getLogger(Config.class);
+
     public static Cache<String, List<String>> onSightCache = new Cache2kBuilder<String, List<String>>(){}
             .expireAfterWrite(1, TimeUnit.HOURS)
             .loader(Config::getList)

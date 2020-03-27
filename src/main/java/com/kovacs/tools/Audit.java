@@ -45,6 +45,9 @@ public class Audit {
         if(auditChannel.equals("")){
             return;
         }
+        if(phrase.length() > 2000){ //we messed up
+            phrase = phrase.substring(0, 2000);
+        }
         MessageChannel channel = jda.getTextChannelById(Config.getString("auditChannel"));
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(title).setColor(Color.ORANGE);

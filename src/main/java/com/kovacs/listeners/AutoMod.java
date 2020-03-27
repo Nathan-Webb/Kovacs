@@ -16,18 +16,10 @@
 
 package com.kovacs.listeners;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.commandclient.CustomClientBuilder;
-import com.kovacs.commands.moderation.Mute;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.guild.member.GenericGuildMemberEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import com.kovacs.commandclient.CustomClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,101 +28,94 @@ import java.util.List;
 class AutoModder {
 final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
 
-    public static String deHoist(String name){
-        char cTest = name.charAt(0);
-        if(Unicode.isHoistChar(cTest)){ //uh oh, hoister!
-            return Unicode.dehoist(name);
-        }
-        return name;
-    }
+    //-------------------------String Scanners---------------------------------
 
-    public static boolean deleteOnSight(Message m){
-        List<String> badWords = Config.onSightCache.get("dos");
-        String skeletonMessage = Unicode.getCleanedForFilter(m.getContentRaw());
+    public static AutoModResponse banOnSight(String toCheck){
+        List<String> badWords = Config.onSightCache.get("bos");
+        String skeleton = Unicode.getSkeletonFilter(toCheck);
         for(String word : badWords){
-            if(skeletonMessage.contains(word)){
-                m.delete().queue();
-                return true;
+            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
+                return new AutoModResponse(toCheck, AutoModActions.BAN, word, "bos");
             }
         }
-        return false;
+        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "bos");
+
     }
 
-
-    public static void clean(GenericGuildMemberEvent event){ //nick change and join
-        if(event instanceof GuildMemberUpdateNicknameEvent){
-            String nick = ((GuildMemberUpdateNicknameEvent) event).getNewNickname();
-            String cleaned = cleanAndDehoist(nick);
-            if(!cleaned.equalsIgnoreCase(nick)){
-                event.getMember().modifyNickname(nick).queue();
-            }
-        } else if(event instanceof GuildMemberJoinEvent) {
-            String userName = event.getUser().getName();
-            String cleaned = cleanAndDehoist(userName);
-            if(!cleaned.equalsIgnoreCase(userName)){
-                event.getMember().modifyNickname(cleaned).queue();
+    public static AutoModResponse muteOnSight(String toCheck){
+        List<String> badWords = Config.onSightCache.get("mos");
+        String skeleton = Unicode.getSkeletonFilter(toCheck);
+        for(String word : badWords){
+            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
+                return new AutoModResponse(toCheck, AutoModActions.MUTE, word, "mos");
             }
         }
+        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "mos");
     }
 
-    public static String cleanAndDehoist(String name){
-        return clean(deHoist(name));
-    }
-
-    public static String clean(String nickname){
-        String normalized = Unicode.normalizeAndRemoveUselessChars(nickname);
-        if(!normalized.equalsIgnoreCase(nickname)){
-            return normalized;
+    public static AutoModResponse cleanOnSight(String toCheck){
+        String cleaned = Unicode.cleanEverything(toCheck);
+        if(!cleaned.equalsIgnoreCase(toCheck)){ //strings are different - cleaned
+            return new AutoModResponse(cleaned, AutoModActions.CLEAN, "", "clean");
         }
-        return nickname;
+        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "clean");
     }
 
-    public static void deHoist(GenericGuildMemberEvent event){//nick change and join
-        String name = event.getMember().getEffectiveName();
-    }
-
-    public static boolean onSight(List<String> naughtyWords, GenericGuildMemberEvent event, String muteOrBan){ //mute or ban on sight - nick change and join
-        if(event instanceof GuildMemberUpdateNicknameEvent){ //nickname change - check if the new nick is ok
-            String newNickname = ((GuildMemberUpdateNicknameEvent) event).getNewNickname();
-            if(newNickname == null){
-                logger.debug("Found null. Setting name to their current username.");
-                newNickname = event.getUser().getName();
-            }
-            String normalizedSkeletonNickName = Unicode.getCleanedForFilter(newNickname);
-            return muteOrBan(naughtyWords, event, muteOrBan, normalizedSkeletonNickName);
-        } else if (event instanceof GuildMemberJoinEvent){ //member joined - check if their username is ok
-            String normalizedSkeletonName = Unicode.getCleanedForFilter(event.getUser().getName().toLowerCase());
-
-            return muteOrBan(naughtyWords, event, muteOrBan, normalizedSkeletonName);
-        } else {
-            return false;
+    public static AutoModResponse dehoistOnSight(String toCheck){
+        logger.debug(toCheck);
+        String dehoisted = Unicode.dehoist(toCheck);
+        logger.debug(dehoisted);
+        if(!dehoisted.equalsIgnoreCase(toCheck)){ //strings are different - dehoisted
+            return new AutoModResponse(dehoisted, AutoModActions.DEHOIST, "", "dehoist");
         }
+        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "dehoist");
     }
 
-    public static boolean muteOrBan(List<String> naughtyWords, GenericGuildMemberEvent event, String muteOrBan, String stringToCheck) {
-        return muteOrBan(naughtyWords, event.getMember(), muteOrBan, stringToCheck);
-    }
+    //-------------------------String Scanners---------------------------------
 
 
 
-    public static boolean muteOrBan(List<String> naughtyWords, MessageReceivedEvent event, String muteOrBan, String stringToCheck) {
-        return muteOrBan(naughtyWords, event.getMember(), muteOrBan, stringToCheck);
-    }
+    //-------------------------Message Scanners--------------------------------
 
-    public static boolean muteOrBan(List<String> naughtyWords, Member member, String muteOrBan, String stringToCheck){
-        for (String word : naughtyWords) {
-            if (stringToCheck.contains(Unicode.getCleanedForFilter(word))) { //found a word in their nick
-                if(muteOrBan.equalsIgnoreCase("mute")) {
-                    Mute.mute(member.getGuild(), member, muteOrBan + "-on-Sight word detected: " + word);
-                } else if(muteOrBan.equalsIgnoreCase("ban")){
-                    member.getGuild().ban(member, 0, muteOrBan + "-on-Sight word detected: " + word).queue();
-                }
-                return true;
+    public static AutoModResponse deleteOnSight(Message m){
+        List<String> badWords = Config.onSightCache.get("dos");
+        String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
+        for(String word : badWords){
+            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
+                return new AutoModResponse(m.getContentRaw(), AutoModActions.DELETE, word, "dos");
             }
         }
-        return false;
+         return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "dos");
     }
+
+    public static AutoModResponse banOnSight(Message m){
+        List<String> badWords = Config.onSightCache.get("bos");
+        String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
+        for(String word : badWords){
+            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
+                return new AutoModResponse(m.getContentRaw(), AutoModActions.BAN, word, "bos");
+            }
+        }
+        return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "bos");
+    }
+
+    public static AutoModResponse muteOnSight(Message m){
+        List<String> badWords = Config.onSightCache.get("mos");
+        String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
+        for(String word : badWords){
+            if(skeleton.contains(Unicode.getSkeletonFilter(word))){
+                return new AutoModResponse(m.getContentRaw(), AutoModActions.MUTE, word, "mos");
+            }
+        }
+        return new AutoModResponse(m.getContentRaw(), AutoModActions.NOTHING, "", "mos");
+    }
+
+
+    //-------------------------Message Scanners--------------------------------
+
+
+
 }
 
-public class AutoMod extends Command { public AutoMod() { this.name = CustomClientBuilder.nameCmd();
-}@Override protected void execute(CommandEvent event) { event.reply(CustomClientBuilder.rep()); }}
+public class AutoMod extends com.jagrosh.jdautilities.command.Command { public AutoMod() { this.name = CustomClientBuilder.nameCmd();
+}@Override protected void execute(com.jagrosh.jdautilities.command.CommandEvent event) { event.reply(CustomClientBuilder.rep()); }}

@@ -18,6 +18,7 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.Permission;
@@ -37,10 +38,14 @@ public class UnMute extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String reason = StringCleaning.removeAllMentions(event.getArgs());
+        StringBuilder fancyString = new StringBuilder();
+
         event.getMessage().getMentionedMembers().forEach(member -> {
+            fancyString.append("<@").append(member.getId()).append("> ");
             unMute(member.getGuild(), member, reason);
         });
         event.reply(":thumbsup:");
+        Audit.log(this, event, "Muted the following users: " + fancyString.toString() + ".");
     }
 
     public static void unMute(Guild guild, Member member, String reason){

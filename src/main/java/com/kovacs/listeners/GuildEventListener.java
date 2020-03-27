@@ -21,54 +21,28 @@ import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class GuildEventListener extends ListenerAdapter {
-/*
-    Priority:
-    dehoist
-    clean
-    Mute
-    Delete
-    Ban
 
-     */
+final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
 
      @Override
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
-         /*if(Config.canUseBot(event.getMember())) { //user can use bot, no need to scan
-             return;
-         }
 
-         boolean dehoist = Config.arrayContains("enabledAutoMod", "dehoist");
-         boolean clean = Config.arrayContains("enabledAutoMod", "clean");
-         boolean mute = Config.arrayContains("enabledAutoMod", "mos");
-         boolean delete = Config.arrayContains("enabledAutoMod", "dos");
-         boolean ban = Config.arrayContains("enabledAutoMod", "ban");
-
-         if(Config.arrayContains("enabledAutoMod", "bos")) {
-             List<String> banOnSight = Config.onSightCache.get("bos");
-             AutoModder.onSight(banOnSight, event, "ban");
-         }
-
-         if(Config.arrayContains("enabledAutoMod", "mos")) {
-             List<String> muteOnSight = Config.onSightCache.get("mos");
-             AutoModder.onSight(muteOnSight, event, "mute");
-         }
-
-         if(Config.arrayContains("enabledAutoMod", "clean"))
-             AutoModder.clean(event);
-*/
+         NameEventListener.scanName(event.getMember(), event.getMember().getEffectiveName());
     }
 
     @Override
     public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event) {
-        if(Config.canUseBot(event.getMember())){
+        if(Config.canUseBot(event.getMember()) && !Config.arrayContains("enabledAutoMod", "janitor")){
             return;
         }
-        if(Config.arrayContains("enabledAutoMod", "janitor")){
+        logger.debug("Janitor Triggered.");
             event.getGuild().retrieveInvites().complete().forEach(invite ->  {
                 try {
                     boolean foundInvites = false;
@@ -77,13 +51,13 @@ public class GuildEventListener extends ListenerAdapter {
                         foundInvites = true;
                     }
                     if(foundInvites){
-                        Audit.log(event.getJDA(), "Automod", event.getJDA().getSelfUser().getAsTag(),
-                                event.getJDA().getSelfUser().getAvatarUrl(), "Janitor Automod: Clearing all invites made by <@" + event.getMember().getId() + "> as they have left.");
+                        Audit.log(event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
+                                event.getJDA().getSelfUser().getAvatarUrl(), "Clearing all " +
+                                        "invites made by <@" + event.getMember().getId() + "> because they left the server.");
                     }
                 } catch (NullPointerException e){
                     //do nothing
                 }
             });
-        }
     }
 }

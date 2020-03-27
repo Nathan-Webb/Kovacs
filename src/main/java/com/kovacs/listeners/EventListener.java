@@ -41,16 +41,6 @@ public class EventListener extends ListenerAdapter {
         logger.debug("Bot ready!");
     }
 
-    //todo dehoist and clean need to be done in one go, or else the event will trigger over and over again
-    /*
-    Priority:
-    dehoist
-    clean
-    Mute
-    Delete
-    Ban
-
-     */
 
 
 

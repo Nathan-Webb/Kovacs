@@ -48,7 +48,7 @@ public class StringCleaning {
     }
 
     public static String removeAllMentions(String s){
-        return s.replaceAll("<[@&!#]\\d+>", "");
+        return s.replaceAll("<[@&!#]+\\d+>", "");
     }
 }
 

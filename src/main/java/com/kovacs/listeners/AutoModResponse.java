@@ -17,31 +17,31 @@
 package com.kovacs.listeners;
 
 public class AutoModResponse {
-    private boolean actionTaken;
     private String moderatedString;
-    private AutoModResponse endResult; //kick/ban/mute
+    private AutoModActions endResult; //kick/ban/mute
     private String triggerPhrase; //if there is one
+    private String autoMod; //bos mos
 
-    public AutoModResponse(boolean actionTaken, String moderatedString, AutoModResponse endResult, String triggerPhrase) {
-        this.actionTaken = actionTaken;
+    public AutoModResponse(String moderatedString, AutoModActions getModerationAction, String triggerPhrase, String autoMod) {
         this.moderatedString = moderatedString;
-        this.endResult = endResult;
+        this.endResult = getModerationAction;
         this.triggerPhrase = triggerPhrase;
-    }
-
-    public boolean isActionTaken() {
-        return actionTaken;
+        this.autoMod = autoMod;
     }
 
     public String getModeratedString() {
         return moderatedString;
     }
 
-    public AutoModResponse getResponse() {
+    public AutoModActions getModerationAction() {
         return endResult;
     }
 
     public String getTriggerPhrase() {
         return triggerPhrase;
+    }
+
+    public String getAutoMod() {
+        return autoMod;
     }
 }

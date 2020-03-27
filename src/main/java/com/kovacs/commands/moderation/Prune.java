@@ -18,6 +18,7 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.Permission;
@@ -46,14 +47,11 @@ public class Prune extends Command {
     protected void execute(CommandEvent event) {
         String args = event.getArgs();
         args = StringCleaning.normalizeSpaces(args);
-        logger.debug(args);
-        String[] arr = StringCleaning.extractIDsFromIdealStr(args);
-        logger.debug(Arrays.deepToString(arr));
-        String amount = arr[arr.length - 1];
-        String[] idsToPrune = new String[arr.length - 1];
+        String[] extractedIds = StringCleaning.extractIDsFromIdealStr(args);
+        String amount = extractedIds[extractedIds.length - 1];
+        String[] idsToPrune = new String[extractedIds.length - 1];
         //leave last arg for max/all/numOfMessages
-        System.arraycopy(arr, 0, idsToPrune, 0, arr.length - 1);
-        logger.debug(Arrays.deepToString(idsToPrune));
+        System.arraycopy(extractedIds, 0, idsToPrune, 0, extractedIds.length - 1);
 
 
         int amountInt;
@@ -73,27 +71,40 @@ public class Prune extends Command {
 
         if(idsToPrune.length == 0){
             if(Config.isSudo(event.getMember())){
-                pruneIndiscriminately(event.getChannel(), amountInt);
+                int res = pruneIndiscriminately(event.getChannel(), amountInt);
                 event.reply(":thumbsup:", success -> success.delete().queueAfter(5, TimeUnit.SECONDS));
+                Audit.log(this, event, "Indiscriminately pruned `" + res + "` messages from " + event.getTextChannel().getAsMention() + ".");
             } else {
                 event.reply("You cannot prune indiscriminately because you are not sudo!" +
                         "\nProvide valid member ID's or mentions!");
             }
         } else {
-            pruneFromUsers(event.getChannel(), amountInt, Arrays.asList(idsToPrune));
+            StringBuilder fancyString = new StringBuilder();
+            for(String s : idsToPrune){
+                fancyString.append("<@").append(s).append("> ");
+            }
+
+            int res = pruneFromUsers(event.getChannel(), amountInt, Arrays.asList(idsToPrune));
             event.reply(":thumbsup:", success -> success.delete().queueAfter(5, TimeUnit.SECONDS));
+
+            Audit.log(this, event, "Pruned `" + res + "` messages from " + event.getTextChannel().getAsMention() + " by the following users: " + fancyString);
+
         }
     }
 
-    private void pruneIndiscriminately(MessageChannel channel, int amount){
+    private int pruneIndiscriminately(MessageChannel channel, int amount){
+        int amountPruned = 0;
+
         List<Message> toPrune = channel.getHistory().retrievePast(amount).complete();
         for (Message message : toPrune) {
-            logger.debug(message.getContentDisplay());
             message.delete().queue();
+            amountPruned++;
         }
+        return amountPruned;
     }
 
-    private void pruneFromUsers(MessageChannel channel, int amount, List<String> ids){
+    private int pruneFromUsers(MessageChannel channel, int amount, List<String> ids){
+        int amountPruned = 0;
         List<Message> toPrune = new ArrayList<>();
         channel.getHistory().retrievePast(amount).complete().forEach((message) ->
         {
@@ -102,9 +113,9 @@ public class Prune extends Command {
             }
         });
         for (Message message : toPrune) {
-            logger.debug(message.getContentDisplay());
             message.delete().queue();
+            amountPruned++;
         }
-
+        return amountPruned;
     }
 }

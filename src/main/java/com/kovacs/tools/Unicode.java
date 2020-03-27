@@ -46,7 +46,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
     }
 
     //this should only be used for checking against a word filter, no public facing stuff
-    public static String getCleanedForFilter(String s){
+    public static String getSkeletonFilter(String s){
         return spoofChecker.getSkeleton(s);
     }
 
@@ -108,7 +108,10 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         return newString.toString();
     }
 
-
+    public static boolean isHoisting(String s){
+        char[] array = s.toCharArray();
+        return Unicode.isHoistChar(array[0]);
+    }
 
     public static String dehoist(String string){
         String finalTrimmed;

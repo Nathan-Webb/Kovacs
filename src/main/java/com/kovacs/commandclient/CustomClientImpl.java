@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.events.EventException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,6 +51,10 @@ public class CustomClientImpl extends CommandClientImpl {
                return;
            }
        }
-       super.onEvent(event);
+       try {
+           super.onEvent(event);
+       } catch (Exception e){
+           logger.error("Exception: " + e.getMessage());
+       }
     }
 }
