@@ -156,7 +156,7 @@ public class MessageEventListener  extends ListenerAdapter {
         }
     }
 
-    private AutoModResponse getResponse(List<AutoModResponse> responses, String automod){
+    static AutoModResponse getResponse(List<AutoModResponse> responses, String automod){
         for(AutoModResponse response : responses){
             if(response.getAutoMod().equalsIgnoreCase(automod)){
                 return response;

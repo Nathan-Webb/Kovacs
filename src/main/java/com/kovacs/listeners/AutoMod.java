@@ -57,12 +57,12 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "mos");
     }
 
-    public static AutoModResponse cleanOnSight(String toCheck){
+    public static AutoModResponse normalizeOnSight(String toCheck){
         String cleaned = Unicode.cleanEverything(toCheck);
         if(!cleaned.equalsIgnoreCase(toCheck)){ //strings are different - cleaned
-            return new AutoModResponse(cleaned, AutoModActions.CLEAN, "", "clean");
+            return new AutoModResponse(cleaned, AutoModActions.CLEAN, "", "normalize");
         }
-        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "clean");
+        return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "normalize");
     }
 
     public static AutoModResponse dehoistOnSight(String toCheck){

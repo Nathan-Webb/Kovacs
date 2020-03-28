@@ -77,7 +77,7 @@ public class NameEventListener extends ListenerAdapter {
         }
 
         if(Config.arrayContains("enabledAutoMod", "normalize")){
-            responses.add(AutoModder.cleanOnSight(name));
+            responses.add(AutoModder.normalizeOnSight(name));
         }
         if(Config.arrayContains("enabledAutoMod", "dehoist")){
             responses.add(AutoModder.dehoistOnSight(name));
@@ -96,16 +96,7 @@ public class NameEventListener extends ListenerAdapter {
 
         if(ban){ //need to ban - dont bother looking for mute / clean
             logger.debug("Ban triggered.");
-            AutoModResponse banResp = null;
-            for(AutoModResponse response : responses){
-                if(response.getAutoMod().equalsIgnoreCase("bos")){
-                    banResp = response;
-                    break;
-                }
-            }
-            if(banResp == null){
-                return;
-            }
+            AutoModResponse banResp = MessageEventListener.getResponse(responses, "bos");
             member.getGuild().ban(member, 0, "Ban on Sight triggered. Trigger: `" + banResp.getTriggerPhrase() + "`. ").queue();
             Audit.log(member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + banResp.getTriggerPhrase() + "`." +
@@ -115,16 +106,7 @@ public class NameEventListener extends ListenerAdapter {
 
         } else if(mute) { //need to mute
             logger.debug("Mute Triggered");
-            AutoModResponse muteResp = null;
-            for(AutoModResponse response : responses){
-                if(response.getAutoMod().equalsIgnoreCase("mos")){
-                    muteResp = response;
-                    break;
-                }
-            }
-            if(muteResp == null){
-                return;
-            }
+            AutoModResponse muteResp = MessageEventListener.getResponse(responses, "mos");
             Mute.mute(member.getGuild(), member, "Mute on Sight triggered. Trigger: `" + muteResp.getTriggerPhrase() + "`. ");
             Audit.log(member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + muteResp.getTriggerPhrase() + "`." +
@@ -135,7 +117,7 @@ public class NameEventListener extends ListenerAdapter {
         AutoModResponse cleanResp = null;
         AutoModResponse dehoistResp = null;
         for(AutoModResponse response : responses){
-            if(response.getAutoMod().equalsIgnoreCase("clean")){
+            if(response.getAutoMod().equalsIgnoreCase("normalize")){
                 cleanResp = response;
                 break;
             }
@@ -154,7 +136,7 @@ public class NameEventListener extends ListenerAdapter {
 
         if(clean && dehoist){ //both
             logger.debug("Dehoist and Clean triggered.");
-            String newName = AutoModder.dehoistOnSight(AutoModder.cleanOnSight(name).getModeratedString())
+            String newName = AutoModder.dehoistOnSight(AutoModder.normalizeOnSight(name).getModeratedString())
                     .getModeratedString();
 
             member.modifyNickname(newName).queue();
