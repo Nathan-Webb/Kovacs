@@ -5,6 +5,7 @@
 /out/*
 config.json
 .idea/*
+!/grade/wrapper/gradle-wrapper.jar
 
 # Gradle #
 ##########
