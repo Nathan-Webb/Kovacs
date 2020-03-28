@@ -28,8 +28,8 @@ import java.util.List;
 
 public class Sudo extends Command {
     public Sudo() {
-        this.name = "AddOwner";
-        this.aliases = new String[]{"sudo"};
+        this.name = "Sudo";
+        this.aliases = new String[]{"addsudo"};
     }
 
     @Override

@@ -45,6 +45,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String[] whiteListedRoles = Config.getList("whitelistedRoles").toArray(new String[]{});
         String[] whitelistedInvites = Config.getList("whitelistedInvites").toArray(new String[]{});
         String[] sudoUsers = Config.getList("sudo").toArray(new String[]{});
+        String[] sudoRoles = Config.getList("sudoRoles").toArray(new String[]{});
         String root = Config.getString("root");
 
         EmbedBuilder builder = new EmbedBuilder();
@@ -65,16 +66,24 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
             sudoBuilder.append(", ").append("<@!").append(id).append(">");
         }
 
+        StringBuilder sudoRoleBuilder = new StringBuilder();
+        for(String id : sudoRoles){
+            sudoRoleBuilder.append(", ").append("<@&").append(id).append(">");
+        }
+
+
         String mentionedUsers = userBuilder.toString().replaceFirst(", ", "");
         String mentionedRoles = rolebuilder.toString().replaceFirst(", ", "");
         String mentionedSudo  = sudoBuilder.toString().replaceFirst(", ", "");
+        String mentionedSudoRoles  = sudoRoleBuilder.toString().replaceFirst(", ", "");
 
         String dosStr =  Arrays.deepToString(dos).replaceAll("[\\[\\]]", "");
         String mosStr =  Arrays.deepToString(mos).replaceAll("[\\[\\]]", "");
         String bosStr =  Arrays.deepToString(bos).replaceAll("[\\[\\]]", "");
         String inviteStr =  Arrays.deepToString(whitelistedInvites).replaceAll("[\\[\\]]", "");
         builder.addField("Root", "<@" + root + ">", true)
-                .addField("Sudo", (mentionedSudo.equals("") ? "None" : mentionedSudo), true)
+                .addField("Sudo Users", (mentionedSudo.equals("") ? "None" : mentionedSudo), true)
+                .addField("Sudo Roles", (mentionedSudoRoles.equals("") ? "None" : mentionedSudoRoles), true)
                 .addField("Whitelisted Users", (mentionedUsers.equals("") ? "None" : mentionedUsers), true)
                 .addField("Whitelisted Roles", (mentionedRoles.equals("") ? "None" : mentionedRoles), true)
                 .addField("Whitelisted Invites", (inviteStr.equals("") ? "None" : inviteStr), true)

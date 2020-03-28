@@ -13,33 +13,34 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 
 import java.io.IOException;
 
-public class ReloadConfig extends Command {
-    public ReloadConfig() {
-        this.name = "ReloadConfig";
-        this.aliases = new String[]{"reloadconf", "configreload", "rlconf"};
+public class SetFallbackName extends Command {
+    public SetFallbackName() {
+        this.name = "SetFallbackName";
+        this.aliases = new String[]{};
         this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        try{
-            Config.reload();
-            event.reply("Reloaded Config!");
-            Audit.log(this, event, "Config Reloaded");
-        } catch (IOException e){
-            event.reply("IOException dummy.");
+        String name = event.getMessage().getContentRaw();
+        if(name.length() <= 32 && name.length() >= 2){
+            try {
+                Config.setString("fallbackName", name);
+            } catch (IOException e) {
+                event.reply("IOException dummy.");
+            }
+        } else {
+            event.reply("Your chosen name must be between 32 and 2 characters!");
         }
 
     }
-
-
 }

@@ -28,7 +28,7 @@ import java.util.List;
 
 public class RemoveSudo extends Command {
     public RemoveSudo() {
-        this.name = "RemoveOwner";
+        this.name = "RemoveSudo";
         this.aliases = new String[]{"rmsudo", "delsudo", "remsudo"};
     }
 

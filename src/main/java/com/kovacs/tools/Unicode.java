@@ -22,6 +22,8 @@ import com.vdurmont.emoji.EmojiParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class Unicode {
 
     private static SpoofChecker spoofChecker;
@@ -56,7 +58,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
     }
 
     public static boolean isHoistChar(Character c){
-        return (33 <= (int) c && (int) c <= 64) //ascii digits and punctuation
+        return (32 <= (int) c && (int) c <= 64) //ascii digits and punctuation
                 || (91 <= (int) c && (int) c <= 96)  //ascii punctuation
                 || (123 <= (int) c && (int) c <= 126); //ascii punctuation
             //33-64 91-96 123-126
@@ -124,13 +126,6 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
             }
         }
 
-        for(indexLeft = 0; indexLeft < string.length(); indexLeft++) {
-            char c = nameArray[indexLeft];
-            if (!Unicode.isHoistChar(c)) { //not hoisting
-                break;
-            }
-
-        }
         String trimmedLeft = string.substring(indexLeft).trim();
         boolean botherWithRight = true;
         if(trimmedLeft.equals("")){ //very bad hoister
