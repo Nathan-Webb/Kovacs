@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
@@ -58,6 +59,7 @@ public class Sudo extends Command {
             Config.addToList("sudoRoles", roles.toArray(new String[]{}));
             event.reply(":thumbsup:");
             Audit.log(this, event, "Sudo users/roles added: " + goodLookingString.toString().replaceAll(", $", ""));
+            Kovacs.reloadCommandClient(); //refresh owner list
         }catch (IOException e){
             event.reply("IOException dummy");
         }

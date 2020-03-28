@@ -123,6 +123,11 @@ public class Config {
         write(Kovacs.config);
     }
 
+    public static void setInt(String key, int value) throws IOException{
+        Kovacs.config.put(key, value);
+        write(Kovacs.config);
+    }
+
     public static int getInt(String key){
         return Kovacs.config.getInt(key);
     }

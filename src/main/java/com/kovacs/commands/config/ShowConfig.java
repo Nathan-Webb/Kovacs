@@ -92,10 +92,11 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
                 .addField("Delete-on-sight", (dosStr.equals("") ? "None" : dosStr), false)
                 .addField("Mute-on-sight", (mosStr.equals("") ? "None" : mosStr), true)
                 .addField("Ban-on-sight", (bosStr.equals("") ? "None" : bosStr), true)
-                .addField("Audit Channel", (auditChannel.equals("") ? "None" : "<@#" + auditChannel + ">"), true)
+                .addField("Audit Channel", (auditChannel.equals("") ? "None" : "<#" + auditChannel + ">"), true)
                 .addField("Muted Role", (mutedRole.equals("") ? "None" : "<@&" + mutedRole + ">"), true)
                 .addField("Fallback Name", Config.getString("fallbackName"), true)
                 .addField("Invite NickName", Config.getString("inviteName"), true)
+                .addField("Duplicate Threshold", String.valueOf(Config.getInt("duplicateThreshold")), true)
                 .addField("--", automod, false);
         event.reply(builder.build());
 
