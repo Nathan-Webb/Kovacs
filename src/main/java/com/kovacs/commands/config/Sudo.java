@@ -20,6 +20,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Sudo extends Command {
     @Override
     protected void execute(CommandEvent event) {
         StringBuilder goodLookingString = new StringBuilder();
+        List<Role> rolesToSudo = event.getMessage().getMentionedRoles();
         List<Member> membersToSudo = event.getMessage().getMentionedMembers();
 
         List<String> members = new ArrayList<>();
@@ -43,10 +45,19 @@ public class Sudo extends Command {
             members.add(id);
         });
 
+        List<String> roles = new ArrayList<>();
+        rolesToSudo.forEach(role -> {
+                    String id = role.getId();
+                    goodLookingString.append("<@&").append(id).append(">, ");
+                    roles.add(id);
+                }
+        );
+
         try {
             Config.addToList("sudo", members.toArray(new String[]{}));
+            Config.addToList("sudoRoles", roles.toArray(new String[]{}));
             event.reply(":thumbsup:");
-            Audit.log(this, event, "Sudo users added: " + goodLookingString.toString().replaceAll(", $", ""));
+            Audit.log(this, event, "Sudo users/roles added: " + goodLookingString.toString().replaceAll(", $", ""));
         }catch (IOException e){
             event.reply("IOException dummy");
         }
