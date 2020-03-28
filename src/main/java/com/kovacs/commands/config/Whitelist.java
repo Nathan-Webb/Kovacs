@@ -59,7 +59,7 @@ public class Whitelist extends Command {
             Config.addToList("whitelistedRoles", roles.toArray(new String[]{}));
             Config.addToList("whitelistedUsers", members.toArray(new String[]{}));
             event.reply(":thumbsup:");
-            Audit.log(this, event, "Users/Roles blacklisted: " + goodLookingString.toString().replaceFirst(", $", "") + ".");
+            Audit.log(this, event, "Users/Roles whitelisted: " + goodLookingString.toString().replaceFirst(", $", "") + ".");
         }catch (IOException e){
             event.reply("IOException dummy");
         }

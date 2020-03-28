@@ -42,13 +42,19 @@ public class Automod extends Command {
         List<String> enabledAutomod = Config.getList("enabledAutoMod");
         StringBuilder builder = new StringBuilder();
         builder.append("**AutoMod**\n");
+        int i = 0;
         for(String automod : automodList){
             if(enabledAutomod.contains(automod)){
                 builder.append(":green_square: ").append(automod);
             } else {
                 builder.append(":red_square: ~~").append(automod).append("~~");
             }
-            builder.append("\n\n");
+            if(i % 2 != 0) {
+                builder.append("\n\n");
+            } else {
+                builder.append(":black_small_square: :black_small_square: :black_small_square: ");
+            }
+            i++;
         }
         return builder.toString();
     }

@@ -67,7 +67,6 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
 
     public static AutoModResponse dehoistOnSight(String toCheck){
         String dehoisted = Unicode.dehoist(toCheck);
-        logger.debug(dehoisted);
         if(!dehoisted.equalsIgnoreCase(toCheck)){ //strings are different - dehoisted
             return new AutoModResponse(dehoisted, AutoModActions.DEHOIST, "", "dehoist");
         }
@@ -81,7 +80,6 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         List<String> foundInvites = new ArrayList<>();
         while (matcher.find()){
             foundInvites.add(matcher.group());
-            logger.debug(matcher.group());
         }
         foundInvites.removeIf(foundInvite -> Config.getList("whitelistedInvites").stream()
                 .anyMatch(whitelistedInvite -> whitelistedInvite.equalsIgnoreCase(StringCleaning.removeUrlKeepInvite(foundInvite))));

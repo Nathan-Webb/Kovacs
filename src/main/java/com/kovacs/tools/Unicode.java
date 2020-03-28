@@ -116,6 +116,9 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
     }
 
     public static String dehoist(String string){
+        if(!Unicode.isHoisting(string)){
+            return string;
+        }
         String finalTrimmed;
         char[] nameArray = string.toCharArray();
         int indexLeft;

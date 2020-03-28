@@ -52,16 +52,20 @@ public class ManageNicks extends Command {
         int count = 0;
         for(Member member : mentionedMembers){
             String name = member.getEffectiveName();
-            if(Unicode.isHoisting(name) && (thingToDo.equals("dehoist") || thingToDo.equals("clean"))){ //is dehoisting and we are dehoisting as a selected option
+            if(thingToDo.equals("dehoist") || thingToDo.equals("clean")){ //if we are dehoisting or cleaning as a selected option
                 name = Unicode.dehoist(name);
-            } else if(thingToDo.equals("normalize") || thingToDo.equals("clean")) {
+            }
+
+            if(thingToDo.equals("normalize") || thingToDo.equals("clean")) { //if we are normalizing or cleaning
                 name = Unicode.cleanEverything(name);
             }
+
+
             if(!name.equalsIgnoreCase(member.getEffectiveName())){ //ended up with different name
                 if(event.getSelfMember().canInteract(member)){
                     member.modifyNickname(name).queue();
                     try{
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e){
                         //do nothing
                     }
