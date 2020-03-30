@@ -20,12 +20,13 @@ dependencies {
     compile group: 'org.json', name: 'json', version: '20180813'
     compile 'com.jagrosh:jda-utilities-menu:3.0.1'
     compile "org.cache2k:cache2k-core:1.2.2.Final"
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6' //i use this for two lines of code - remove asap
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation 'org.reflections:reflections:0.9.12'
     compile group: 'com.ibm.icu', name: 'icu4j', version: '66.1'
     compile 'com.vdurmont:emoji-java:5.1.1'
+    compile 'org.mongodb:mongo-java-driver:2.12.3'
+
 
 
 

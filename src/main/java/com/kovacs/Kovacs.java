@@ -82,7 +82,7 @@ public class Kovacs {
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("root"))
                 .setCoOwnerIds(config.getJSONArray("sudo").toList().toArray(new String[]{}))
-                .setPrefix(config.getString("prefix"))
+                .setPrefix(config.getString("prefix")) //todo remove this when we move to mongo - guild config will create it by default per-server
                 .setAlternativePrefix("@mention")
                 .addCommands(configCommands)
                 .addCommands(moderation)

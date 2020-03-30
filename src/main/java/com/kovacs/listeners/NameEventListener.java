@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+//Dedicated to Bowser. Here's hoping Christmas 2019 doesn't happen again.
 public class NameEventListener extends ListenerAdapter {
     final static Logger logger = LoggerFactory.getLogger(NameEventListener.class);
 

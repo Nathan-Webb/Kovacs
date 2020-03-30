@@ -45,10 +45,12 @@ public class Config {
     public static void reload(JSONObject jsonObject) throws IOException {
         Kovacs.config  = jsonObject;
     }
+    //todo why do I use a big library for this one line
     public static JSONObject open() throws IOException{
         return new JSONObject(FileUtils.readFileToString(new File("config.json"), "UTF-8"));
     }
 
+    //todo why do I use a big library for this one line
     public static void write(JSONObject json) throws IOException {
         FileUtils.writeStringToFile(new File("config.json"), json.toString(4), "UTF-8");
     }
