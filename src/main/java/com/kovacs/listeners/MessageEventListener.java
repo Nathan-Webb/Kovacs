@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
+//Dedicated to Bowser. Here's hoping Christmas 2019 doesn't happen again.
 public class MessageEventListener  extends ListenerAdapter {
     final static Logger logger = LoggerFactory.getLogger(MessageEventListener.class);
 

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+//Dedicated to Bowser. Here's hoping Christmas 2019 doesn't happen again.
 public class GuildEventListener extends ListenerAdapter {
 
 final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
