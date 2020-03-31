@@ -19,30 +19,46 @@ package com.kovacs.database;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 public class GuildConfig implements GuildSettingsProvider {
-    private long auditChannel, mutedRole, guildID;
-    private int duplicateThreshold;
-    private String prefix, inviteName, fallbackName;
-    private Collection<Long> whitelistedRoles, sudoRoles, whitelistedUsers, sudoUsers;
-    private Collection<String> BOS, DOS, MOS, enabledAutoMod, whitelistedInvites;
+    private String auditChannel;
+    private String mutedRole;
+    private String guildID;
+    private int duplicateThreshold = 4;
+    private String prefix = ".";
+    private String inviteName = "invite";
+    private String fallbackName = "fallback";
+    private ArrayList<String> whitelistedRoles;
+    private ArrayList<String> sudoRoles;
+    private ArrayList<String> whitelistedUsers;
+    private ArrayList<String> sudoUsers;
+    private ArrayList<String> BOS;
+    private ArrayList<String> DOS;
+    private ArrayList<String> MOS;
+    private ArrayList<String> enabledAutoMod;
+    private ArrayList<String> whitelistedInvites = new ArrayList<>();
 
-    public GuildConfig setAuditChannel(long auditChannel) {
+    public static GuildConfig get(String guildID){
+        return Database.getConfig(guildID);
+    }
+
+    GuildConfig(String guildID){ //create with defaults
+        this.guildID = guildID;
+    }
+
+    public GuildConfig setAuditChannel(String auditChannel) {
         this.auditChannel = auditChannel;
         return this;
     }
 
-    public GuildConfig setMutedRole(long mutedRole) {
+    public GuildConfig setMutedRole(String mutedRole) {
         this.mutedRole = mutedRole;
         return this;
     }
 
-    public GuildConfig setGuildID(long guildID) {
-        this.guildID = guildID;
-        return this;
-    }
 
     public GuildConfig setDuplicateThreshold(int duplicateThreshold) {
         this.duplicateThreshold = duplicateThreshold;
@@ -64,47 +80,47 @@ public class GuildConfig implements GuildSettingsProvider {
         return this;
     }
 
-    public GuildConfig setWhitelistedRoles(Collection<Long> whitelistedRoles) {
+    public GuildConfig setWhitelistedRoles(ArrayList<String> whitelistedRoles) {
         this.whitelistedRoles = whitelistedRoles;
         return this;
     }
 
-    public GuildConfig setSudoRoles(Collection<Long> sudoRoles) {
+    public GuildConfig setSudoRoles(ArrayList<String> sudoRoles) {
         this.sudoRoles = sudoRoles;
         return this;
     }
 
-    public GuildConfig setWhitelistedUsers(Collection<Long> whitelistedUsers) {
+    public GuildConfig setWhitelistedUsers(ArrayList<String> whitelistedUsers) {
         this.whitelistedUsers = whitelistedUsers;
         return this;
     }
 
-    public GuildConfig setSudoUsers(Collection<Long> sudoUsers) {
+    public GuildConfig setSudoUsers(ArrayList<String> sudoUsers) {
         this.sudoUsers = sudoUsers;
         return this;
     }
 
-    public GuildConfig setBOS(Collection<String> BOS) {
+    public GuildConfig setBOS(ArrayList<String> BOS) {
         this.BOS = BOS;
         return this;
     }
 
-    public GuildConfig setDOS(Collection<String> DOS) {
+    public GuildConfig setDOS(ArrayList<String> DOS) {
         this.DOS = DOS;
         return this;
     }
 
-    public GuildConfig setMOS(Collection<String> MOS) {
+    public GuildConfig setMOS(ArrayList<String> MOS) {
         this.MOS = MOS;
         return this;
     }
 
-    public GuildConfig setEnabledAutoMod(Collection<String> enabledAutoMod) {
+    public GuildConfig setEnabledAutoMod(ArrayList<String> enabledAutoMod) {
         this.enabledAutoMod = enabledAutoMod;
         return this;
     }
 
-    public GuildConfig setWhitelistedInvites(Collection<String> whitelistedInvites) {
+    public GuildConfig setWhitelistedInvites(ArrayList<String> whitelistedInvites) {
         this.whitelistedInvites = whitelistedInvites;
         return this;
     }
@@ -112,18 +128,18 @@ public class GuildConfig implements GuildSettingsProvider {
     @Nullable
     @Override
     public Collection<String> getPrefixes() {
-        return Collections.singleton(prefix);
+        return Collections.singleton(getPrefix());
     }
 
-    public long getAuditChannel() {
+    public String getAuditChannel() {
         return auditChannel;
     }
 
-    public long getMutedRole() {
+    public String getMutedRole() {
         return mutedRole;
     }
 
-    public long getGuildID() {
+    public String getGuildID() {
         return guildID;
     }
 
@@ -143,19 +159,19 @@ public class GuildConfig implements GuildSettingsProvider {
         return fallbackName;
     }
 
-    public Collection<Long> getWhitelistedRoles() {
+    public Collection<String> getWhitelistedRoles() {
         return whitelistedRoles;
     }
 
-    public Collection<Long> getSudoRoles() {
+    public Collection<String> getSudoRoles() {
         return sudoRoles;
     }
 
-    public Collection<Long> getWhitelistedUsers() {
+    public Collection<String> getWhitelistedUsers() {
         return whitelistedUsers;
     }
 
-    public Collection<Long> getSudoUsers() {
+    public Collection<String> getSudoUsers() {
         return sudoUsers;
     }
 
@@ -171,7 +187,7 @@ public class GuildConfig implements GuildSettingsProvider {
         return MOS;
     }
 
-    public Collection<String> getEnabledAutoMod() {
+    public ArrayList<String> getEnabledAutoMod() {
         return enabledAutoMod;
     }
 

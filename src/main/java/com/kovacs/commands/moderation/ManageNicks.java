@@ -53,7 +53,7 @@ public class ManageNicks extends Command {
         for(Member member : mentionedMembers){
             String name = member.getEffectiveName();
             if(thingToDo.equals("dehoist") || thingToDo.equals("clean")){ //if we are dehoisting or cleaning as a selected option
-                name = Unicode.dehoist(name);
+                name = Unicode.dehoist(event.getGuild(), name);
             }
 
             if(thingToDo.equals("normalize") || thingToDo.equals("clean")) { //if we are normalizing or cleaning

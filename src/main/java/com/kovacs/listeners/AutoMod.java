@@ -16,9 +16,11 @@
 
 package com.kovacs.listeners;
 
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import com.kovacs.tools.Unicode;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import com.kovacs.commandclient.CustomClientBuilder;
 import org.slf4j.Logger;
@@ -65,8 +67,8 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "normalize");
     }
 
-    public static AutoModResponse dehoistOnSight(String toCheck){
-        String dehoisted = Unicode.dehoist(toCheck);
+    public static AutoModResponse dehoistOnSight(Guild g, String toCheck){
+        String dehoisted = Unicode.dehoist(g, toCheck);
         if(!dehoisted.equalsIgnoreCase(toCheck)){ //strings are different - dehoisted
             return new AutoModResponse(dehoisted, AutoModActions.DEHOIST, "", "dehoist");
         }

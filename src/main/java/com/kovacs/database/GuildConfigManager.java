@@ -17,26 +17,34 @@
 package com.kovacs.database;
 
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
+import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Guild;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.net.UnknownHostException;
 
 public class GuildConfigManager implements GuildSettingsManager {
+final static Logger logger = LoggerFactory.getLogger(GuildConfigManager.class);
 
     @Nullable
     @Override
     public Object getSettings(Guild guild) {
-        //todo grab settings from mongodb and return the object
-        return null;
+        return GuildConfig.get(guild.getId());
     }
 
     @Override
     public void init() {
-        //startup db connection here?
+        try {
+            Database.connect(Config.getString("mongoDbURI"));
+        } catch (UnknownHostException e) {
+            logger.error("Unknown host exception!", e);
+        }
     }
 
     @Override
     public void shutdown() {
-        //close db connection here?
+        Database.getClient().close();
     }
 }

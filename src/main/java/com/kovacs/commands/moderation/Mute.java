@@ -18,8 +18,9 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -46,7 +47,7 @@ public class Mute extends Command {
         Audit.log(this, event, "Muted the following users: " + fancyString.toString() + ".");
     }
     public static void mute(Guild guild, Member member, String reason){
-        String mutedRole = Config.getString("mutedRole");
+        String mutedRole = GuildConfig.get(guild.getId()).getMutedRole();
         if(mutedRole.equalsIgnoreCase("")){
             return;
         }

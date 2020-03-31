@@ -17,6 +17,8 @@
 package com.kovacs.listeners;
 
 import com.kovacs.commands.moderation.Mute;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.DupeChecker;
@@ -45,7 +47,7 @@ public class MessageEventListener  extends ListenerAdapter {
             boolean dupe = DupeChecker.addAndCheck(event.getMessage());
             if(dupe){
                 Mute.mute(event.getGuild(), event.getMember(), "Anti-Duplicate triggered.");
-                Audit.log(event.getJDA(), "Anti-Duplicate triggered.", event.getJDA().getSelfUser().getAsTag(), event.getJDA().getSelfUser().getAvatarUrl(),
+                Audit.log(event.getGuild(), event.getJDA(), "Anti-Duplicate triggered.", event.getJDA().getSelfUser().getAsTag(), event.getJDA().getSelfUser().getAvatarUrl(),
                         "\nUser: " + event.getAuthor().getAsMention() +
                         "\nMessage: " + event.getMessage().getContentRaw());
             }
@@ -63,25 +65,28 @@ public class MessageEventListener  extends ListenerAdapter {
     }
 
     private void scanMessage(Message message){
-        if(Config.canUseBot(message.getMember())){
+        if(ConfigTools.canUseBot(message.getMember())){
             return;
         }
 
-        List<AutoModResponse> responses = new ArrayList<>();
+        GuildConfig config = GuildConfig.get(message.getGuild().getId());
 
-        if(Config.arrayContains("enabledAutoMod", "bos")){
+        List<AutoModResponse> responses = new ArrayList<>();
+        ArrayList<String> enabledAutomod = config.getEnabledAutoMod();
+
+        if(enabledAutomod.contains("bos")){
             responses.add(AutoModder.banOnSight(message.getContentRaw()));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "mos")){
+        if(enabledAutomod.contains("mos")){
             responses.add(AutoModder.muteOnSight(message.getContentRaw()));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "dos")){
+        if(enabledAutomod.contains("dos")){
             responses.add(AutoModder.deleteOnSight(message));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "invites")){
+        if(enabledAutomod.contains("invites")){
             responses.add(AutoModder.invites(message.getContentRaw()));
         }
 
@@ -101,7 +106,7 @@ public class MessageEventListener  extends ListenerAdapter {
             AutoModResponse banResp = getResponse(responses, "bos");
 
             //message.getGuild().ban(Objects.requireNonNull(message.getMember()), 0, "Ban on Sight triggered. Trigger: `" + banResp.getTriggerPhrase() + "`. ").queue();
-            Audit.log(message.getJDA(), "Ban on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
+            Audit.log(message.getGuild(), message.getJDA(), "Ban on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
                     message.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + banResp.getTriggerPhrase() + "`." +
                             "\nUser: " + message.getAuthor().getAsMention() +
                             "\nMessage: " + message.getContentRaw());
@@ -111,7 +116,7 @@ public class MessageEventListener  extends ListenerAdapter {
             AutoModResponse muteResp = getResponse(responses, "mos");
 
             //Mute.mute(message.getGuild(), message.getMember(), "Mute on Sight triggered. Trigger: `" + muteResp.getTriggerPhrase() + "`. ");
-            Audit.log(message.getJDA(), "Mute on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
+            Audit.log(message.getGuild(), message.getJDA(), "Mute on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
                     message.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + muteResp.getTriggerPhrase() + "`." +
                             "\nUser: " + message.getAuthor().getAsMention() +
                             "\nMessage: " + message.getContentRaw());
@@ -122,7 +127,7 @@ public class MessageEventListener  extends ListenerAdapter {
             AutoModResponse deleteResp = getResponse(responses, "dos");
 
             message.delete().queue();
-            Audit.log(message.getJDA(), "Delete on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
+            Audit.log(message.getGuild(), message.getJDA(), "Delete on Sight triggered.", message.getJDA().getSelfUser().getAsTag(),
                     message.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + deleteResp.getTriggerPhrase() + "`." +
                             "\nUser: " + message.getAuthor().getAsMention() +
                             "\nMessage: " + message.getContentRaw());
@@ -131,22 +136,22 @@ public class MessageEventListener  extends ListenerAdapter {
             AutoModResponse inviteResp = getResponse(responses, "invites");
             message.delete().queue();
 
-            String action = Config.getString("inviteName");
+            String action = config.getInviteName();
             if(action.equalsIgnoreCase("ban")){
                 Objects.requireNonNull(message.getMember()).ban(0).reason("Invite Kick Triggered").queue();
-                Audit.log(message.getJDA(), "Invite deletion + Ban  triggered.", message.getJDA().getSelfUser().getAsTag(),
+                Audit.log(message.getGuild(), message.getJDA(), "Invite deletion + Ban  triggered.", message.getJDA().getSelfUser().getAsTag(),
                         message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
                                 "\nUser: " + message.getAuthor().getAsMention() +
                                 "\nMessage: " + message.getContentRaw());
 
             } else if (action.equalsIgnoreCase("kick")){
                 Objects.requireNonNull(message.getMember()).kick().reason("Invite Kick Triggered").queue();
-                Audit.log(message.getJDA(), "Invite deletion + Kick  triggered.", message.getJDA().getSelfUser().getAsTag(),
+                Audit.log(message.getGuild(), message.getJDA(), "Invite deletion + Kick  triggered.", message.getJDA().getSelfUser().getAsTag(),
                         message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
                                 "\nUser: " + message.getAuthor().getAsMention() +
                                 "\nMessage: " + message.getContentRaw());
             } else {
-                Audit.log(message.getJDA(), "Invite deletion triggered.", message.getJDA().getSelfUser().getAsTag(),
+                Audit.log(message.getGuild(), message.getJDA(), "Invite deletion triggered.", message.getJDA().getSelfUser().getAsTag(),
                         message.getJDA().getSelfUser().getAvatarUrl(), "Invite: `" + inviteResp.getTriggerPhrase() + "`." +
                                 "\nUser: " + message.getAuthor().getAsMention() +
                                 "\nMessage: " + message.getContentRaw());

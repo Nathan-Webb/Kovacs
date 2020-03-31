@@ -15,6 +15,7 @@
  */
 package com.kovacs.commandclient;
 
+import com.kovacs.database.ConfigTools;
 import com.kovacs.tools.Config;
 import com.jagrosh.jdautilities.command.*;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
@@ -47,7 +48,7 @@ public class CustomClientImpl extends CommandClientImpl {
            if(((MessageReceivedEvent) event).getAuthor().isBot()){
                return;
            }
-           if(Config.cantUseBot(Objects.requireNonNull(((MessageReceivedEvent) event).getMember()))) { //user isn't whitelisted to use the bot - ignore command
+           if(ConfigTools.cantUseBot(Objects.requireNonNull(((MessageReceivedEvent) event).getMember()))) { //user isn't whitelisted to use the bot - ignore command
                return;
            }
        }

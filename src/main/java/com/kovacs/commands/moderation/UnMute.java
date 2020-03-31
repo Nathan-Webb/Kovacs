@@ -18,6 +18,7 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
@@ -49,7 +50,7 @@ public class UnMute extends Command {
     }
 
     public static void unMute(Guild guild, Member member, String reason){
-        String mutedRole = Config.getString("mutedRole");
+        String mutedRole = GuildConfig.get(guild.getId()).getMutedRole();
         if(mutedRole.equalsIgnoreCase("")){
             return;
         }

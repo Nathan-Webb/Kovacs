@@ -34,7 +34,7 @@ public class Info extends Command {
 
         EmbedBuilder infoEmbed = new EmbedBuilder();
         infoEmbed.setColor(Color.ORANGE)
-                .addField("Owner", "<@" + Config.getString("root") + ">", false)
+                .addField("Bot Owner", "<@" + Config.getString("botOwner") + ">", false)
                 .addField("Library", "[DV8FromTheWorld/JDA](https://github.com/DV8FromTheWorld/JDA)", false)
                 .addField("Github", "[Nathan-Webb/Kovacs](https://github.com/Nathan-Webb/Kovacs)", false);
         event.reply(infoEmbed.build());

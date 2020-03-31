@@ -16,6 +16,7 @@
 
 package com.kovacs.listeners;
 
+import com.kovacs.database.ConfigTools;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -42,7 +43,7 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
 
     @Override
     public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event) { //not filtering bots because sometimes they can leave invites lying around
-        if(Config.canUseBot(event.getMember()) && !Config.arrayContains("enabledAutoMod", "janitor")){
+        if(ConfigTools.canUseBot(event.getMember()) && !Config.arrayContains("enabledAutoMod", "janitor")){
             return;
         }
         logger.debug("Janitor Triggered.");
@@ -54,7 +55,7 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
                         foundInvites = true;
                     }
                     if(foundInvites){
-                        Audit.log(event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
+                        Audit.log(event.getGuild(), event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
                                 event.getJDA().getSelfUser().getAvatarUrl(), "Clearing all " +
                                         "invites made by <@" + event.getMember().getId() + "> because they left the server.");
                     }

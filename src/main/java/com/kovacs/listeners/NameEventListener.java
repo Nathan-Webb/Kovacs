@@ -17,6 +17,8 @@
 package com.kovacs.listeners;
 
 import com.kovacs.commands.moderation.Mute;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
@@ -63,28 +65,31 @@ public class NameEventListener extends ListenerAdapter {
 
     static void scanName(Member member, String name){
 
-        if(Config.canUseBot(member)){
+        if(ConfigTools.canUseBot(member)){
             return;
         }
+        GuildConfig config = GuildConfig.get(member.getGuild().getId());
+
 
         List<AutoModResponse> responses = new ArrayList<>();
+        ArrayList<String> enabledAutomod = config.getEnabledAutoMod();
 
-        if(Config.arrayContains("enabledAutoMod", "bos")){
+        if(enabledAutomod.contains("bos")){
             responses.add(AutoModder.banOnSight(name));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "mos")){
+        if(enabledAutomod.contains("mos")){
             responses.add(AutoModder.muteOnSight(name));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "normalize")){
+        if(enabledAutomod.contains("normalize")){
             responses.add(AutoModder.normalizeOnSight(name));
         }
-        if(Config.arrayContains("enabledAutoMod", "dehoist")){
-            responses.add(AutoModder.dehoistOnSight(name));
+        if(enabledAutomod.contains("dehoist")){
+            responses.add(AutoModder.dehoistOnSight(member.getGuild(), name));
         }
 
-        if(Config.arrayContains("enabledAutoMod", "invites")){
+        if(enabledAutomod.contains("invites")){
             responses.add(AutoModder.invites(name));
         }
 
@@ -99,7 +104,7 @@ public class NameEventListener extends ListenerAdapter {
             logger.debug("Ban triggered.");
             AutoModResponse banResp = MessageEventListener.getResponse(responses, "bos");
             member.getGuild().ban(member, 0, "Ban on Sight triggered. Trigger: `" + banResp.getTriggerPhrase() + "`. ").queue();
-            Audit.log(member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + banResp.getTriggerPhrase() + "`." +
                             "\nUser: " + member.getAsMention() +
                             "\nName: " + name);
@@ -109,7 +114,7 @@ public class NameEventListener extends ListenerAdapter {
             logger.debug("Mute Triggered");
             AutoModResponse muteResp = MessageEventListener.getResponse(responses, "mos");
             Mute.mute(member.getGuild(), member, "Mute on Sight triggered. Trigger: `" + muteResp.getTriggerPhrase() + "`. ");
-            Audit.log(member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Ban on Sight triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "Trigger: `" + muteResp.getTriggerPhrase() + "`." +
                             "\nUser: " + member.getAsMention() +
                             "\nName: " + name);
@@ -137,11 +142,11 @@ public class NameEventListener extends ListenerAdapter {
 
         if(clean && dehoist){ //both
             logger.debug("Dehoist and Clean triggered.");
-            String newName = AutoModder.dehoistOnSight(AutoModder.normalizeOnSight(name).getModeratedString())
+            String newName = AutoModder.dehoistOnSight(member.getGuild(), AutoModder.normalizeOnSight(name).getModeratedString())
                     .getModeratedString();
 
             member.modifyNickname(newName).queue();
-            Audit.log(member.getJDA(), "Dehoist+Clean  triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Dehoist+Clean  triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
 
@@ -151,7 +156,7 @@ public class NameEventListener extends ListenerAdapter {
             assert cleanResp != null;
             String newName = cleanResp.getModeratedString();
             member.modifyNickname(newName).queue();
-            Audit.log(member.getJDA(), "Clean triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Clean triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
 
@@ -161,45 +166,43 @@ public class NameEventListener extends ListenerAdapter {
             assert dehoistResp != null;
             String newName = dehoistResp.getModeratedString();
             if(invites){ //hoisting with an invite - not nice
-                newName = Config.getString("inviteName");
+                newName = config.getInviteName();
                 if (inviteKickBan(member, name, newName)){
                     return;
                 }
             }
             member.modifyNickname(newName).queue();
-            Audit.log(member.getJDA(), "Dehoist triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Dehoist triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
 
         } else if(invites) {
             logger.debug("Invites Triggered");
-            String newName = Config.getString("inviteName");
+            String newName = config.getInviteName();
             if (inviteKickBan(member, name, newName)){
                 return;
             }
-            member.modifyNickname(Config.getString("inviteName")).queue();
-            Audit.log(member.getJDA(), "Anti-Invite triggered.", member.getJDA().getSelfUser().getAsTag(),
+            member.modifyNickname(GuildConfig.get(member.getGuild().getId()).getInviteName()).queue();
+            Audit.log(member.getGuild(), member.getJDA(), "Anti-Invite triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
-
         }
     }
 
     private static boolean inviteKickBan(Member member, String name, String newName) {
         if(newName.equalsIgnoreCase("ban")){
             member.ban(0, "Anti-Invite ban triggered.").queue();
-            Audit.log(member.getJDA(), "Anti-Invite ban triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Anti-Invite ban triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
             return true;
         } else if(newName.equalsIgnoreCase("kick")){ //gotta kick the user
             member.kick("Anti-Invite kick triggered.").queue();
-            Audit.log(member.getJDA(), "Anti-Invite kick triggered.", member.getJDA().getSelfUser().getAsTag(),
+            Audit.log(member.getGuild(), member.getJDA(), "Anti-Invite kick triggered.", member.getJDA().getSelfUser().getAsTag(),
                     member.getJDA().getSelfUser().getAvatarUrl(), "User: " + member.getAsMention() +
                             "\nName: " + name);
             return true;
         }
         return false;
     }
-
 }

@@ -86,26 +86,6 @@ public class Config {
         return arrayContains("sudo", member.getId()) || getString("root").equals(member.getId());
     }
 
-
-
-    public static boolean canUseBot(Member member){
-        return !cantUseBot(member);
-    }
-    public static boolean cantUseBot(Member member){
-        String authorID = member.getId();
-        if(!Kovacs.config.getJSONArray("sudo").toList().contains(authorID) && !Kovacs.config.getString("root").equals(authorID)){ //user isn't a bot owner
-            if(!Kovacs.config.getJSONArray("whitelistedUsers").toList().contains(authorID)){ //user isn't whitelisted
-                if(member.getRoles().stream()
-                        .noneMatch(role -> Kovacs.config.getJSONArray("sudoRoles").toList().contains(role.getId()))){ //none of the users roles are sudo
-                    return member.getRoles().stream()
-                            .noneMatch(role -> Kovacs.config.getJSONArray("whitelistedRoles").toList().contains(role.getId())); //are any of the roles whitelisted?
-                }
-
-            }
-        }
-        return false;
-    }
-
     public static boolean arrayContains(String arrayName, String entry){
         return Kovacs.config.getJSONArray(arrayName).toList().contains(entry);
     }

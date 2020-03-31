@@ -19,6 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.slf4j.Logger;
@@ -37,16 +38,16 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
 
     @Override
     protected void execute(CommandEvent event) {
-        String automod = Automod.getAutoModSettings();
-        String[] dos = Config.onSightCache.get("dos").toArray(new String[]{});
-        String[] mos = Config.onSightCache.get("mos").toArray(new String[]{});
-        String[] bos = Config.onSightCache.get("bos").toArray(new String[]{});
-        String[] whiteListedUsers = Config.getList("whitelistedUsers").toArray(new String[]{});
-        String[] whiteListedRoles = Config.getList("whitelistedRoles").toArray(new String[]{});
-        String[] whitelistedInvites = Config.getList("whitelistedInvites").toArray(new String[]{});
-        String[] sudoUsers = Config.getList("sudo").toArray(new String[]{});
-        String[] sudoRoles = Config.getList("sudoRoles").toArray(new String[]{});
-        String root = Config.getString("root");
+        GuildConfig config = GuildConfig.get(event.getGuild().getId());
+        String automod = Automod.getAutoModSettings(event.getGuild().getId());
+        String[] dos = config.getDOS().toArray(new String[]{});
+        String[] mos = config.getMOS().toArray(new String[]{});
+        String[] bos = config.getBOS().toArray(new String[]{});
+        String[] whiteListedUsers = config.getWhitelistedUsers().toArray(new String[]{});
+        String[] whiteListedRoles = config.getWhitelistedRoles().toArray(new String[]{});
+        String[] whitelistedInvites = config.getWhitelistedInvites().toArray(new String[]{});
+        String[] sudoUsers = config.getSudoUsers().toArray(new String[]{});
+        String[] sudoRoles = config.getSudoRoles().toArray(new String[]{});
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.ORANGE).setTitle("Config");
@@ -71,8 +72,8 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
             sudoRoleBuilder.append(", ").append("<@&").append(id).append(">");
         }
 
-        String auditChannel = Config.getString("auditChannel");
-        String mutedRole = Config.getString("mutedRole");
+        String auditChannel = config.getAuditChannel();
+        String mutedRole = config.getMutedRole();
 
         String mentionedUsers = userBuilder.toString().replaceFirst(", ", "");
         String mentionedRoles = rolebuilder.toString().replaceFirst(", ", "");
@@ -83,8 +84,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String mosStr =  Arrays.deepToString(mos).replaceAll("[\\[\\]]", "");
         String bosStr =  Arrays.deepToString(bos).replaceAll("[\\[\\]]", "");
         String inviteStr =  Arrays.deepToString(whitelistedInvites).replaceAll("[\\[\\]]", "");
-        builder.addField("Root", "<@" + root + ">", true)
-                .addField("Sudo Users", (mentionedSudo.equals("") ? "None" : mentionedSudo), true)
+        builder.addField("Sudo Users", (mentionedSudo.equals("") ? "None" : mentionedSudo), true)
                 .addField("Sudo Roles", (mentionedSudoRoles.equals("") ? "None" : mentionedSudoRoles), true)
                 .addField("Whitelisted Users", (mentionedUsers.equals("") ? "None" : mentionedUsers), true)
                 .addField("Whitelisted Roles", (mentionedRoles.equals("") ? "None" : mentionedRoles), true)
@@ -94,14 +94,11 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
                 .addField("Ban-on-sight", (bosStr.equals("") ? "None" : bosStr), true)
                 .addField("Audit Channel", (auditChannel.equals("") ? "None" : "<#" + auditChannel + ">"), true)
                 .addField("Muted Role", (mutedRole.equals("") ? "None" : "<@&" + mutedRole + ">"), true)
-                .addField("Fallback Name", Config.getString("fallbackName"), true)
-                .addField("Invite NickName", Config.getString("inviteName"), true)
+                .addField("Fallback Name", config.getFallbackName(), true)
+                .addField("Invite NickName", config.getInviteName(), true)
                 .addField("Duplicate Threshold", String.valueOf(Config.getInt("duplicateThreshold")), true)
                 .addField("--", automod, false);
         event.reply(builder.build());
-
-
-
 
     }
 }

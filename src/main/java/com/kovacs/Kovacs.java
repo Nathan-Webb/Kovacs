@@ -24,6 +24,7 @@ import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
+import com.kovacs.database.GuildConfigManager;
 import com.kovacs.listeners.*;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
@@ -85,6 +86,7 @@ public class Kovacs {
                 .setPrefix(config.getString("prefix")) //todo remove this when we move to mongo - guild config will create it by default per-server
                 .setAlternativePrefix("@mention")
                 .addCommands(configCommands)
+                .setGuildSettingsManager(new GuildConfigManager())
                 .addCommands(moderation)
                 .addCommands(generic)
                 .setActivity(Activity.of(ActivityType.valueOf(ActivityType.class, config.getString("activityType")),

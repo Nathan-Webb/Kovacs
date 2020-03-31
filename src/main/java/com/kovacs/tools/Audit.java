@@ -18,8 +18,10 @@ package com.kovacs.tools;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.GuildConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 
 import java.awt.*;
@@ -27,7 +29,7 @@ import java.awt.*;
 public class Audit {
 
     public static void log(Command command, CommandEvent commandEvent, String phrase){
-        String auditChannel = Config.getString("auditChannel");
+        String auditChannel = GuildConfig.get(commandEvent.getGuild().getId()).getAuditChannel();
         if(auditChannel.equals("")){
             return;
         }
@@ -40,8 +42,8 @@ public class Audit {
         channel.sendMessage(builder.build()).queue();
     }
 
-    public static void log(JDA jda, String title, String author, String avatarUrl, String phrase){
-        String auditChannel = Config.getString("auditChannel");
+    public static void log(Guild g, JDA jda, String title, String author, String avatarUrl, String phrase){
+        String auditChannel = GuildConfig.get(g.getId()).getAuditChannel();
         if(auditChannel.equals("")){
             return;
         }

@@ -18,7 +18,9 @@ package com.kovacs.tools;
 
 import com.ibm.icu.text.Normalizer2;
 import com.ibm.icu.text.SpoofChecker;
+import com.kovacs.database.GuildConfig;
 import com.vdurmont.emoji.EmojiParser;
+import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +117,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         return Unicode.isHoistChar(array[0]);
     }
 
-    public static String dehoist(String string){
+    public static String dehoist(Guild g, String string){
         if(!Unicode.isHoisting(string)){
             return string;
         }
@@ -133,7 +135,7 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
         boolean botherWithRight = true;
         if(trimmedLeft.equals("")){ //very bad hoister
             botherWithRight = false; //dont even bother with that reverse loop
-            finalTrimmed = Config.getString("fallbackName");
+            finalTrimmed = GuildConfig.get(g.getId()).getFallbackName();
         } else {
             finalTrimmed = trimmedLeft;
         }

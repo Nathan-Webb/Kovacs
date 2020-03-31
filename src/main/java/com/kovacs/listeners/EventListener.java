@@ -16,6 +16,7 @@
 package com.kovacs.listeners;
 
 import com.kovacs.commands.moderation.Mute;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.Unicode;
@@ -47,15 +48,15 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onRoleDelete(@Nonnull RoleDeleteEvent event) {
-        if(event.getRole().getId().equalsIgnoreCase(Config.getString("mutedRole"))){
-            Audit.log(event.getJDA(), "Warning!", event.getJDA().getSelfUser().getAsTag(), event.getJDA().getSelfUser().getAvatarUrl(),
+        if(event.getRole().getId().equalsIgnoreCase(GuildConfig.get(event.getGuild().getId()).getMutedRole())){
+            Audit.log(event.getGuild(), event.getJDA(), "Warning!", event.getJDA().getSelfUser().getAsTag(), event.getJDA().getSelfUser().getAvatarUrl(),
                     "The muted role has been deleted! Please set a new one!");
         }
     }
 
     @Override
     public void onTextChannelDelete(@Nonnull TextChannelDeleteEvent event) {
-        if(event.getChannel().getId().equalsIgnoreCase(Config.getString("auditChannel"))){
+        if(event.getChannel().getId().equalsIgnoreCase(GuildConfig.get(event.getGuild().getId()).getAuditChannel())){
             Objects.requireNonNull(event.getGuild().getOwner()).getUser().openPrivateChannel().queue(privateChannel ->
                     privateChannel.sendMessage("**Warning!**" +
                             "\nThe audit channel has been deleted! Please set a new one!").queue());

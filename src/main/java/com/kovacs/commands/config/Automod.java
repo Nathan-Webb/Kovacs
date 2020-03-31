@@ -18,6 +18,8 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
@@ -33,12 +35,13 @@ public class Automod extends Command {
     @Override
     protected void execute(CommandEvent event) {
 
-        event.reply(getAutoModSettings());
+        event.reply(getAutoModSettings(event.getGuild().getId()));
 
     }
 
-    public static String getAutoModSettings(){
-        List<String> automodList = Config.getList("automod");
+    public static String getAutoModSettings(String guildID){
+        GuildConfig config = GuildConfig.get(guildID);
+        List<String> automodList = config.getEnabledAutoMod();
         List<String> enabledAutomod = Config.getList("enabledAutoMod");
         StringBuilder builder = new StringBuilder();
         builder.append("**AutoMod**\n");

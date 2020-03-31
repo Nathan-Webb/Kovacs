@@ -18,6 +18,8 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Config;
 
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class Prefix extends Command {
                 event.reply("The maximum prefix length is `5`");
             }
         } else {
-            event.reply("The bot prefix is `" + Config.getString("prefix") + "`" +
+            event.reply("The bot prefix is `" + GuildConfig.get(event.getGuild().getId()).getPrefix() + "`" +
                     "\nYou can also use " + event.getSelfMember().getAsMention() + ".");
         }
     }
