@@ -19,6 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
@@ -38,7 +39,7 @@ public class RemoveMOS extends Command {
 
         try {
             Config.removeFromList("mos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("mos"), null); //reload mute on sight
+            Cache.MOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload mute on sight
 
             event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Mute-On-Sight list.");
             Audit.log(this, event, "Mute-On-Sight words removed: `" + Arrays.toString(words) + "`.");

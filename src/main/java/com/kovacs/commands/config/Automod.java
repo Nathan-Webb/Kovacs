@@ -41,8 +41,8 @@ public class Automod extends Command {
 
     public static String getAutoModSettings(String guildID){
         GuildConfig config = GuildConfig.get(guildID);
-        List<String> automodList = config.getEnabledAutoMod();
-        List<String> enabledAutomod = Config.getList("enabledAutoMod");
+        List<String> automodList = Config.getList("automod");
+        List<String> enabledAutomod = config.getEnabledAutoMod();
         StringBuilder builder = new StringBuilder();
         builder.append("**AutoMod**\n");
         int i = 0;

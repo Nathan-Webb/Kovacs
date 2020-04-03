@@ -19,14 +19,19 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
+import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +57,13 @@ final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
             response -> {
         if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
             try {
+
                 Config.addToList("bos", words);
-                Config.onSightCache.reloadAll(Collections.singleton("bos"), null); //reload ban on sight
+                ArrayList<String> bos = GuildConfig.get(event.getGuild().getId()).getBOS();
+                bos.addAll(Arrays.asList(words));
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
+
+                Cache.BOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload ban on sight
                 event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
                 Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");
             }catch (IOException e){

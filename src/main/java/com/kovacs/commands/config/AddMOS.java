@@ -19,6 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
@@ -38,7 +39,7 @@ public class AddMOS extends Command {
 
         try {
             Config.addToList("mos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("mos"), null); //reload mute on sight
+            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload mute on sight
 
             event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Mute-On-Sight list.");
             Audit.log(this, event, "Mute-On-Sight words added: `" + Arrays.toString(words) + "`.");

@@ -22,7 +22,6 @@ import org.cache2k.Cache2kBuilder;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
@@ -44,10 +43,6 @@ public class Database {
             })
             .build();
 
-    public static GuildConfig getConfig(String serverID){
-        return configCache.get(serverID);
-    }
-
     public static void connect(String uri) throws UnknownHostException {
         client = new MongoClient(new MongoClientURI(uri));
     }
@@ -57,6 +52,9 @@ public class Database {
     }
 
 
+    public static void updateConfig(String serverID, DBObject toChange){
+        getCollectionConfig().update(new BasicDBObject("_id", serverID), toChange);
+    }
 
     public static MongoClient getClient(){
         return client;

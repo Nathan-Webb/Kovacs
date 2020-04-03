@@ -19,6 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
 
@@ -38,7 +39,7 @@ public class AddDOS extends Command {
 
         try {
             Config.addToList("dos", words);
-            Config.onSightCache.reloadAll(Collections.singleton("dos"), null); //reload delete on sight
+            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload delete on sight
 
             event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Delete-On-Sight list.");
             Audit.log(this, event, "Delete-On-Sight words added: `" + Arrays.toString(words) + "`.");

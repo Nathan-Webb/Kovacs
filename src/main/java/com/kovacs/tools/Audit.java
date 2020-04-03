@@ -33,7 +33,7 @@ public class Audit {
         if(auditChannel.equals("")){
             return;
         }
-        MessageChannel channel = commandEvent.getJDA().getTextChannelById(Config.getString("auditChannel"));
+        MessageChannel channel = commandEvent.getJDA().getTextChannelById(auditChannel);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(command.getName()).setColor(Color.ORANGE);
         builder.setDescription(phrase);
@@ -50,7 +50,7 @@ public class Audit {
         if(phrase.length() > 2000){ //we messed up
             phrase = phrase.substring(0, 2000);
         }
-        MessageChannel channel = jda.getTextChannelById(Config.getString("auditChannel"));
+        MessageChannel channel = jda.getTextChannelById(auditChannel);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(title).setColor(Color.ORANGE);
         builder.setDescription(phrase);

@@ -75,19 +75,19 @@ public class MessageEventListener  extends ListenerAdapter {
         ArrayList<String> enabledAutomod = config.getEnabledAutoMod();
 
         if(enabledAutomod.contains("bos")){
-            responses.add(AutoModder.banOnSight(message.getContentRaw()));
+            responses.add(AutoModder.banOnSight(message.getGuild(), message.getContentRaw()));
         }
 
         if(enabledAutomod.contains("mos")){
-            responses.add(AutoModder.muteOnSight(message.getContentRaw()));
+            responses.add(AutoModder.muteOnSight(message.getGuild(), message.getContentRaw()));
         }
 
         if(enabledAutomod.contains("dos")){
-            responses.add(AutoModder.deleteOnSight(message));
+            responses.add(AutoModder.deleteOnSight(message.getGuild(), message));
         }
 
         if(enabledAutomod.contains("invites")){
-            responses.add(AutoModder.invites(message.getContentRaw()));
+            responses.add(AutoModder.invites(message.getGuild(), message.getContentRaw()));
         }
 
 

@@ -16,9 +16,28 @@
 
 package com.kovacs.database;
 
+import com.kovacs.tools.Stuff;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigTools {
+
+    public static boolean isSudo(Member member){
+        if(Stuff.getOwnerID(member.getGuild()).equals(member.getId())){
+            return true;
+        }
+        GuildConfig config = GuildConfig.get(member.getGuild().getId());
+        ArrayList<String> sudoRoles = config.getSudoRoles();
+        ArrayList<String> sudoUsers = config.getSudoUsers();
+        if(sudoUsers.contains(member.getId())){
+            return true;
+        }
+        List<Role> roles = member.getRoles();
+        return roles.stream().anyMatch(r -> sudoRoles.contains(r.getId()));
+    }
 
     public static boolean canUseBot(Member member){
         return !cantUseBot(member);

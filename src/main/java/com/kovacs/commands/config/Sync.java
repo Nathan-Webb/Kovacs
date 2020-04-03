@@ -19,6 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Config;
 
 import java.io.IOException;
@@ -33,16 +34,16 @@ public class Sync extends Command {
     @Override
     protected void execute(CommandEvent event) {
         List<String> combined = new ArrayList<>();
-        combined.addAll(Config.onSightCache.get("mos"));
-        combined.addAll(Config.onSightCache.get("dos"));
+        combined.addAll(Cache.MOS.get(event.getGuild().getId()));
+        combined.addAll(Cache.DOS.get(event.getGuild().getId()));
         try {
             Config.addToList("mos",  combined.toArray(new String[]{}));
             Config.addToList("dos", combined.toArray(new String[]{}));
             Set<String> toReload = new HashSet<>();
             toReload.add("mos");
             toReload.add("dos");
-            Config.onSightCache.reloadAll(toReload, null); //reload mute/delete on sight
-
+            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
+            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
             event.reply(":thumbsup: Delete-on-Sight and Mute-On-Sight have been synced!");
             Audit.log(this, event, "Delete-on-Sight and Mute-On-Sight synced.");
         } catch (IOException e) {

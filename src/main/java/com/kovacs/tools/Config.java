@@ -16,28 +16,22 @@
 package com.kovacs.tools;
 
 import com.kovacs.Kovacs;
-import net.dv8tion.jda.api.entities.Member;
-import org.apache.commons.io.FileUtils;
-import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Config {
     final static Logger logger = LoggerFactory.getLogger(Config.class);
 
-    public static Cache<String, List<String>> onSightCache = new Cache2kBuilder<String, List<String>>(){}
-            .expireAfterWrite(1, TimeUnit.HOURS)
-            .loader(Config::getList)
-            .build();
+
     public static void reload() throws IOException {
         Kovacs.config  = open();
     }
@@ -45,14 +39,12 @@ public class Config {
     public static void reload(JSONObject jsonObject) throws IOException {
         Kovacs.config  = jsonObject;
     }
-    //todo why do I use a big library for this one line
     public static JSONObject open() throws IOException{
-        return new JSONObject(FileUtils.readFileToString(new File("config.json"), "UTF-8"));
+        return new JSONObject(Files.readString(Paths.get("config.json"), StandardCharsets.UTF_8));
     }
 
-    //todo why do I use a big library for this one line
     public static void write(JSONObject json) throws IOException {
-        FileUtils.writeStringToFile(new File("config.json"), json.toString(4), "UTF-8");
+        Files.writeString(Paths.get("config.json"), json.toString(4));
     }
     public static void writeAndReload(JSONObject json) throws IOException {
         write(json);
@@ -79,11 +71,6 @@ public class Config {
         }
         config.put(listName, new JSONArray(jsonArr));
         writeAndReload(config);
-    }
-
-
-    public static boolean isSudo(Member member){
-        return arrayContains("sudo", member.getId()) || getString("root").equals(member.getId());
     }
 
     public static boolean arrayContains(String arrayName, String entry){

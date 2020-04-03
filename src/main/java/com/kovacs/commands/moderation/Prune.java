@@ -18,6 +18,7 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
@@ -69,7 +70,7 @@ public class Prune extends Command {
         }
 
         if(idsToPrune.length == 0){
-            if(Config.isSudo(event.getMember())){
+            if(ConfigTools.isSudo(event.getMember())){
                 int res = pruneIndiscriminately(event.getChannel(), amountInt);
                 event.reply(":thumbsup:", success -> success.delete().queueAfter(5, TimeUnit.SECONDS));
                 Audit.log(this, event, "Indiscriminately pruned `" + res + "` messages from " + event.getTextChannel().getAsMention() + ".");

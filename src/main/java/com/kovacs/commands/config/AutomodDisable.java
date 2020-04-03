@@ -18,11 +18,15 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Config;
 import com.kovacs.tools.StringCleaning;
+import com.mongodb.BasicDBObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,14 +45,13 @@ public class AutomodDisable extends Command {
         List<String> splitList = Arrays.asList(splitAutoMod);
         List<String> autoModList = Config.getList("automod");
         if(autoModList.containsAll(splitList)){
-            try {
-                Config.removeFromList("enabledAutoMod", splitAutoMod);
+                ArrayList<String> autoMod = GuildConfig.get(event.getGuild().getId()).getEnabledAutoMod();
+                autoMod.removeAll(splitList);
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("enabledAutoMod", autoMod));
                 event.reply("Disabled " + automod);
                 Audit.log(this, event, "Automod features disabled: `" + Arrays.toString(splitAutoMod) + "`.");
 
-            } catch (IOException e) {
-                event.reply("IOException Dummy.");
-            }
+
         } else {
             event.reply("One of your provided options are not valid! The available options are: `" + autoModList.toString() + "`.");
         }

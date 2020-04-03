@@ -42,11 +42,18 @@ public class GuildConfig implements GuildSettingsProvider {
     private ArrayList<String> whitelistedInvites = new ArrayList<>();
 
     public static GuildConfig get(String guildID){
-        return Database.getConfig(guildID);
+        return Database.configCache.get(guildID);
+
     }
 
     GuildConfig(String guildID){ //create with defaults
         this.guildID = guildID;
+    }
+
+    @Nullable
+    @Override
+    public Collection<String> getPrefixes() {
+        return Collections.singleton(getPrefix());
     }
 
     public GuildConfig setAuditChannel(String auditChannel) {
@@ -125,12 +132,6 @@ public class GuildConfig implements GuildSettingsProvider {
         return this;
     }
 
-    @Nullable
-    @Override
-    public Collection<String> getPrefixes() {
-        return Collections.singleton(getPrefix());
-    }
-
     public String getAuditChannel() {
         return auditChannel;
     }
@@ -159,31 +160,31 @@ public class GuildConfig implements GuildSettingsProvider {
         return fallbackName;
     }
 
-    public Collection<String> getWhitelistedRoles() {
+    public ArrayList<String> getWhitelistedRoles() {
         return whitelistedRoles;
     }
 
-    public Collection<String> getSudoRoles() {
+    public ArrayList<String> getSudoRoles() {
         return sudoRoles;
     }
 
-    public Collection<String> getWhitelistedUsers() {
+    public ArrayList<String> getWhitelistedUsers() {
         return whitelistedUsers;
     }
 
-    public Collection<String> getSudoUsers() {
+    public ArrayList<String> getSudoUsers() {
         return sudoUsers;
     }
 
-    public Collection<String> getBOS() {
+    public ArrayList<String> getBOS() {
         return BOS;
     }
 
-    public Collection<String> getDOS() {
+    public ArrayList<String> getDOS() {
         return DOS;
     }
 
-    public Collection<String> getMOS() {
+    public ArrayList<String> getMOS() {
         return MOS;
     }
 
@@ -191,7 +192,7 @@ public class GuildConfig implements GuildSettingsProvider {
         return enabledAutoMod;
     }
 
-    public Collection<String> getWhitelistedInvites() {
+    public ArrayList<String> getWhitelistedInvites() {
         return whitelistedInvites;
     }
 }

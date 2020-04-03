@@ -17,7 +17,7 @@
 package com.kovacs.listeners;
 
 import com.kovacs.database.GuildConfig;
-import com.kovacs.tools.Config;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.StringCleaning;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,8 +36,8 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
 
     //-------------------------String Scanners---------------------------------
 
-    public static AutoModResponse banOnSight(String toCheck){
-        List<String> badWords = Config.onSightCache.get("bos");
+    public static AutoModResponse banOnSight(Guild g, String toCheck){
+        List<String> badWords = Cache.BOS.get(g.getId());
         String skeleton = Unicode.getSkeletonFilter(toCheck);
         for(String word : badWords){
             if(skeleton.contains(Unicode.getSkeletonFilter(word))){
@@ -48,8 +48,8 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
 
     }
 
-    public static AutoModResponse muteOnSight(String toCheck){
-        List<String> badWords = Config.onSightCache.get("mos");
+    public static AutoModResponse muteOnSight(Guild g, String toCheck){
+        List<String> badWords = Cache.MOS.get(g.getId());
         String skeleton = Unicode.getSkeletonFilter(toCheck);
         for(String word : badWords){
             if(skeleton.contains(Unicode.getSkeletonFilter(word))){
@@ -76,14 +76,14 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
     }
 
     //invite regex gracefully provided by ravy#0001
-    public static AutoModResponse invites(String s){
+    public static AutoModResponse invites(Guild guild, String s){
         Pattern pattern = Pattern.compile("(https?://)?(www\\.)?((discord|invite)\\.(gg|li|me|io)|discordapp\\.com/invite)/(\\s)?.+");
         Matcher matcher = pattern.matcher(s);
         List<String> foundInvites = new ArrayList<>();
         while (matcher.find()){
             foundInvites.add(matcher.group());
         }
-        foundInvites.removeIf(foundInvite -> Config.getList("whitelistedInvites").stream()
+        foundInvites.removeIf(foundInvite -> GuildConfig.get(guild.getId()).getWhitelistedInvites().stream()
                 .anyMatch(whitelistedInvite -> whitelistedInvite.equalsIgnoreCase(StringCleaning.removeUrlKeepInvite(foundInvite))));
         if(foundInvites.size() > 0) {
                 return new AutoModResponse("", AutoModActions.INVITES, foundInvites.toString(), "invites");
@@ -99,8 +99,8 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
     //-------------------------Message Scanners--------------------------------
 
 
-    public static AutoModResponse deleteOnSight(Message m){
-        List<String> badWords = Config.onSightCache.get("dos");
+    public static AutoModResponse deleteOnSight(Guild guild, Message m){
+        List<String> badWords = Cache.DOS.get(guild.getId());
         String skeleton = Unicode.getSkeletonFilter(m.getContentRaw());
         for(String word : badWords){
             if(skeleton.contains(Unicode.getSkeletonFilter(word))){

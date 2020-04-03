@@ -75,11 +75,11 @@ public class NameEventListener extends ListenerAdapter {
         ArrayList<String> enabledAutomod = config.getEnabledAutoMod();
 
         if(enabledAutomod.contains("bos")){
-            responses.add(AutoModder.banOnSight(name));
+            responses.add(AutoModder.banOnSight(member.getGuild(), name));
         }
 
         if(enabledAutomod.contains("mos")){
-            responses.add(AutoModder.muteOnSight(name));
+            responses.add(AutoModder.muteOnSight(member.getGuild(), name));
         }
 
         if(enabledAutomod.contains("normalize")){
@@ -90,7 +90,7 @@ public class NameEventListener extends ListenerAdapter {
         }
 
         if(enabledAutomod.contains("invites")){
-            responses.add(AutoModder.invites(name));
+            responses.add(AutoModder.invites(member.getGuild(), name));
         }
 
 
