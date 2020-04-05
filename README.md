@@ -5,6 +5,6 @@ This is just a mod bot with your run of the mill generic mod commands. It has a 
 
 Something to keep me productive during the quarantine I guess.
 
-Built with Java 11 and MongoDB. Deployed with Jenkins.
+Built with Java 11 and [MongoDB](https://www.mongodb.com/). Deployed with [Jenkins](https://jenkins.io/) and [Gradle](https://gradle.org/).
 
 ##### Built By Spider#5879

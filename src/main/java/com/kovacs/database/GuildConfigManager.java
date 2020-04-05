@@ -36,11 +36,7 @@ final static Logger logger = LoggerFactory.getLogger(GuildConfigManager.class);
 
     @Override
     public void init() {
-        try {
-            Database.connect(Kovacs.config.getString("mongoDbURI"));
-        } catch (UnknownHostException e) {
-            logger.error("Unknown host exception!", e);
-        }
+        Database.connect(Kovacs.config.getString("mongoDbURI"));
     }
 
     @Override
