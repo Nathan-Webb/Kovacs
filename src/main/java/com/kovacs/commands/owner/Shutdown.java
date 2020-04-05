@@ -28,7 +28,7 @@ public class Shutdown extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply("Shutting down. Good luck.");
+        event.reply("Shutting down! Good luck.");
         event.getJDA().shutdown();
     }
 }

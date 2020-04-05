@@ -17,6 +17,7 @@
 package com.kovacs.database;
 
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
+import com.kovacs.Kovacs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class GuildConfig implements GuildSettingsProvider {
     private String mutedRole = "";
     private String guildID;
     private int duplicateThreshold = 4;
-    private String prefix = ".";
+    private String prefix = Kovacs.config.getString("prefix");
     private String inviteName = "invite";
     private String fallbackName = "fallback";
     private ArrayList<String> whitelistedRoles = new ArrayList<>();

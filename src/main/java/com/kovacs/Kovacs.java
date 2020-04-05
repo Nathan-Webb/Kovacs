@@ -25,6 +25,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
 import com.kovacs.commands.owner.ReloadConfig;
+import com.kovacs.commands.owner.Shutdown;
 import com.kovacs.commands.owner.Test;
 import com.kovacs.database.GuildConfigManager;
 import com.kovacs.listeners.*;
@@ -40,10 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -78,7 +76,7 @@ public class Kovacs {
 
     public static CommandClient getCommandClient(){
         Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new Sudo(),
-                new RemoveBOS(), new Blacklist(), new ReloadConfig(), new AutoMod(), new SetAuditChannel(),
+                new RemoveBOS(), new Blacklist(), new AutoMod(), new SetAuditChannel(),
                 new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
                 new Automod(), new SetDuplicateThreshold(), new RemoveDOS(), new RemoveMOS(), new Prefix(),
                 new WhitelistInvites(), new BlackistInvites(), new SetFallbackName(), new SetInviteName()};
@@ -86,7 +84,9 @@ public class Kovacs {
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
                 new ManageNicks()};
 
-        Command[] generic = new Command[]{new Ping(), new Test(), new Normalize(), new Help(), new Info()};
+        Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new Info()};
+
+        Command[] owner = new Command[]{new Shutdown(), new ReloadConfig(), new Test()};
 
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("botOwner"))
@@ -96,18 +96,18 @@ public class Kovacs {
                 .setGuildSettingsManager(new GuildConfigManager())
                 .addCommands(moderation)
                 .addCommands(generic)
+                .addCommands(owner)
                 .setActivity(Activity.of(ActivityType.valueOf(ActivityType.class, config.getString("activityType")),
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)
                 .build();
     }
 
-    public static Collection<String> addIfMissing(Collection<String> target, Collection<String> toAdd){
+    public static void addIfMissing(Collection<String> target, Collection<String> toAdd){
         toAdd.stream().distinct().forEach(string -> {
             if(!target.contains(string)){
                 target.add(string);
             }
         });
-        return target;
     }
 }
