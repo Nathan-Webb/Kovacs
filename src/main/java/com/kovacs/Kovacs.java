@@ -58,7 +58,7 @@ public class Kovacs {
             "normalize", "janitor", "invites", "duplicates"};
 
 
-    //todo UPDATE THE DUPE CHECKER TO FACTOR IN GUILDS BEFORE RELEASING
+    //todo migrate to non-deprecated version
     public static void main(String[] args) throws LoginException, IOException {
         config = BotConfig.open();
         waiter = new EventWaiter(eventWaiterScheduler, false);

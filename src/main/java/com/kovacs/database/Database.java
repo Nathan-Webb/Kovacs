@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
@@ -48,13 +47,14 @@ public class Database {
             })
             .build();
 
-    public static void connect(String uri) throws UnknownHostException {
+    public static void connect(String uri) {
         client = new MongoClient(new MongoClientURI(uri));
     }
 
     public static DBCollection getCollectionConfig(){
         return client.getDB("kovacs").getCollection("serverConfig");
     }
+
 
 
     public static void updateConfig(String serverID, DBObject toChange){
