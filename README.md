@@ -5,6 +5,6 @@ This is just a mod bot with your run of the mill generic mod commands. It has a 
 
 Something to keep me productive during the quarantine I guess.
 
-This is built for one or two servers (hence the very rudimentary config). I may consider expanding and using an actual database such as MongoDB. However steps would need to be taken to ensure clarity in terms of necessary permissions and if moderation actions can be taken by the bot in certain situations.
+Built with Java 11 and MongoDB
 
 ##### Built By Spider#5879

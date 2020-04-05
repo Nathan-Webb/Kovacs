@@ -28,30 +28,36 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
 public class DupeChecker {
-    private static HashMap<String, Duplicate> duplicates = new HashMap<>();
+    private static HashMap<String, HashMap<String, Duplicate>> duplicates = new HashMap<>();
 
     final static Logger logger = LoggerFactory.getLogger(DupeChecker.class);
 
     public static boolean addAndCheck(Message message){
+        String guildID = message.getGuild().getId();
         String userID = message.getAuthor().getId();
         String messageStr = message.getContentRaw();
-        Duplicate duplicate = duplicates.get(userID);
+        HashMap<String, Duplicate> serverDupes = duplicates.getOrDefault(guildID, new HashMap<>());
+        Duplicate duplicate = serverDupes.get(userID);
         if(duplicate == null){
-            duplicates.put(userID, new Duplicate(userID, messageStr));
+            serverDupes.put(userID, new Duplicate(userID, messageStr));
+            duplicates.put(guildID, serverDupes);
             return false;
         }
         if(areSimilar(duplicate.getMessage(), messageStr)){ //found dupe
             int dupeAmount = duplicate.getAndAddOne();
             if(dupeAmount > GuildConfig.get(message.getGuild().getId()).getDuplicateThreshold()){ //uh oh! more than N duplicate messages!
-                duplicates.put(userID, duplicate);
+                serverDupes.put(userID, duplicate);
+                duplicates.put(guildID, serverDupes);
                 return true;
             } else {
-                duplicates.put(userID, duplicate);
+                serverDupes.put(userID, duplicate);
+                duplicates.put(guildID, serverDupes);
                 return false;
             }
         } else { //not dupe
             duplicate.resetWithNewMessage(messageStr);
-            duplicates.put(userID, duplicate);
+            serverDupes.put(userID, duplicate);
+            duplicates.put(guildID, serverDupes);
             return false;
         }
     }
