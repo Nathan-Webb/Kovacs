@@ -52,10 +52,8 @@ public class AutomodEnable extends Command {
 
                 GuildConfig config = GuildConfig.get(event.getGuild().getId());
                 ArrayList<String> automodConfig = config.getEnabledAutoMod();
-
-                if(automodConfig.addAll(autoModList)){ //any actual changes made
-                    Database.updateConfig(event.getGuild().getId(), new BasicDBObject("enabledAutoMod", automodConfig));
-                }
+                Kovacs.addIfMissing(automodConfig, splitList);
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("enabledAutoMod", automodConfig));
                 event.reply("Enabled " + automod);
                 Audit.log(this, event, "Automod features enabled: `" + Arrays.toString(splitAutoMod) + "`.");
 

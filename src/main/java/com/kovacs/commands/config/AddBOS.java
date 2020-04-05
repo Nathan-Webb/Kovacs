@@ -59,10 +59,9 @@ final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
         if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
 
                 ArrayList<String> bos = GuildConfig.get(event.getGuild().getId()).getBOS();
-                if(bos.addAll(Arrays.asList(words))){
-                    Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
-                    Cache.BOS.put(event.getGuild().getId(), bos);
-                }
+            Kovacs.addIfMissing(bos, Arrays.asList(words));
+            Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
+            Cache.BOS.put(event.getGuild().getId(), bos);
 
                 event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
                 Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");

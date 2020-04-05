@@ -56,12 +56,10 @@ public class DupeChecker {
         }
     }
 
-    //todo we need to test this
     public static boolean areSimilar(String string1, String string2){
        SimilarityStrategy strategy = new JaroWinklerStrategy();
         StringSimilarityService service = new StringSimilarityServiceImpl(strategy);
-        double score = service.score(string1, string2); // Score is 0.90
-        logger.debug(String.valueOf(score));
+        double score = service.score(string1, string2);
         return score > 0.95;
     }
 }

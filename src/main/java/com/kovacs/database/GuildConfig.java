@@ -57,7 +57,6 @@ public class GuildConfig implements GuildSettingsProvider {
     @Nullable
     @Override
     public Collection<String> getPrefixes() {
-        logger.debug("Requesting prefixes: " + getPrefix());
         return Collections.singleton(getPrefix());
     }
 

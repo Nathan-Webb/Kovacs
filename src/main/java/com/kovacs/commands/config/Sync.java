@@ -18,11 +18,13 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.Database;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
 import com.mongodb.BasicDBObjectBuilder;
 
+import java.io.CharArrayReader;
 import java.util.*;
 
 public class Sync extends Command {
@@ -34,12 +36,11 @@ public class Sync extends Command {
     @Override
     protected void execute(CommandEvent event) {
         List<String> combined = new ArrayList<>(Cache.MOS.get(event.getGuild().getId()));
-        if(combined.addAll(Cache.DOS.get(event.getGuild().getId()))){
-            Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder().add("mos", combined)
-            .add("dos", combined).get());
-            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
-            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
-        }
+        Kovacs.addIfMissing(combined, Cache.DOS.get(event.getGuild().getId()));
+        Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder().add("mos", combined)
+                .add("dos", combined).get());
+        Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
+        Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null);
 
         event.reply(":thumbsup: Delete-on-Sight and Mute-On-Sight have been synced!");
         Audit.log(this, event, "Delete-on-Sight and Mute-On-Sight synced.");

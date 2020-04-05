@@ -31,7 +31,6 @@ public class Ping extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        logger.debug("Pong!");
         event.reply("Pong!");
     }
 }

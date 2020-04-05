@@ -18,6 +18,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
@@ -38,15 +39,13 @@ public class AddDOS extends Command {
     protected void execute(CommandEvent event) {
         String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
-            ArrayList<String> dos = GuildConfig.get(event.getGuild().getId()).getDOS();
-            if(dos.addAll(Arrays.asList(words))){
-                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("dos", dos));
-                Cache.DOS.put(event.getGuild().getId(), dos);
+        ArrayList<String> dos = GuildConfig.get(event.getGuild().getId()).getDOS();
+        Kovacs.addIfMissing(dos, Arrays.asList(words));
+        Database.updateConfig(event.getGuild().getId(), new BasicDBObject("dos", dos));
+        Cache.DOS.put(event.getGuild().getId(), dos);
 
-            }
-
-            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Delete-On-Sight list.");
-            Audit.log(this, event, "Delete-On-Sight words added: `" + Arrays.toString(words) + "`.");
+        event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Delete-On-Sight list.");
+        Audit.log(this, event, "Delete-On-Sight words added: `" + Arrays.toString(words) + "`.");
 
     }
 }

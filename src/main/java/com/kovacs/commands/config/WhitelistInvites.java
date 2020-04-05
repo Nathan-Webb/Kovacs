@@ -18,6 +18,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
@@ -44,13 +45,11 @@ public class WhitelistInvites extends Command {
         String[] words = Sanitizers.removeUrlKeepInvite(
                 Sanitizers.normalizeSpacesClearCommas(event.getArgs())).split(" ");
 
-            ArrayList<String> whitelistedInvites = GuildConfig.get(event.getGuild().getId()).getWhitelistedInvites();
-            if(whitelistedInvites.addAll(Arrays.asList(words))){
-                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("whitelistedInvites", whitelistedInvites));
-            }
-
-            event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Whitelisted invites.");
-            Audit.log(this, event, "Whitelisted invites added: `" + Arrays.toString(words) + "`.");
+        ArrayList<String> whitelistedInvites = GuildConfig.get(event.getGuild().getId()).getWhitelistedInvites();
+        Kovacs.addIfMissing(whitelistedInvites, Arrays.asList(words));
+        Database.updateConfig(event.getGuild().getId(), new BasicDBObject("whitelistedInvites", whitelistedInvites));
+        event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Whitelisted invites.");
+        Audit.log(this, event, "Whitelisted invites added: `" + Arrays.toString(words) + "`.");
 
     }
 }

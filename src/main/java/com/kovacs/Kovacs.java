@@ -40,6 +40,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -96,5 +100,14 @@ public class Kovacs {
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)
                 .build();
+    }
+
+    public static Collection<String> addIfMissing(Collection<String> target, Collection<String> toAdd){
+        toAdd.stream().distinct().forEach(string -> {
+            if(!target.contains(string)){
+                target.add(string);
+            }
+        });
+        return target;
     }
 }

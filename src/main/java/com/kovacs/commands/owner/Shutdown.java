@@ -14,20 +14,21 @@
  *    limitations under the License.
  */
 
-package com.kovacs.commands.generic;
+package com.kovacs.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Unicode;
 
-public class Normalize extends Command {
-    public Normalize() {
-        this.name = "Normalize";
-        this.aliases = new String[]{"unfuck", "clearMyHeadache", "cureMyHeadache"};
+public class Shutdown extends Command {
+    public Shutdown() {
+        this.name = "Shutdown";
+        this.aliases = new String[]{};
+        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply(Unicode.dehoist(event.getGuild(), Unicode.cleanEverything(event.getGuild(), event.getArgs())));
+        event.reply("Shutting down. Good luck.");
+        event.getJDA().shutdown();
     }
 }

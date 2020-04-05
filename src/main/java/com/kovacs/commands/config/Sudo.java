@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
@@ -57,8 +58,8 @@ public class Sudo extends Command {
          GuildConfig guildConfig = GuildConfig.get(event.getGuild().getId());
          ArrayList<String> sudoUsers = guildConfig.getSudoUsers();
          ArrayList<String> sudoRoles = guildConfig.getSudoRoles();
-         sudoUsers.addAll(memberIDs);
-         sudoRoles.addAll(roleIDs);
+         Kovacs.addIfMissing(sudoUsers, memberIDs);
+         Kovacs.addIfMissing(sudoRoles, roleIDs);
 
         Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder().add("sudoUsers", sudoUsers)
                 .add("sudoRoles", sudoRoles).get());

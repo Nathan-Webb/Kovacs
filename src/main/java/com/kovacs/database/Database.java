@@ -19,6 +19,8 @@ package com.kovacs.database;
 import com.mongodb.*;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Database {
     private static MongoClient client;
+
+    final static Logger logger = LoggerFactory.getLogger(Database.class);
 
     public static Cache<String, GuildConfig> configCache = new Cache2kBuilder<String, GuildConfig>(){}
             .expireAfterWrite(1, TimeUnit.HOURS)
@@ -54,8 +58,11 @@ public class Database {
 
 
     public static void updateConfig(String serverID, DBObject toChange){
-        configCache.reloadAll(Collections.singleton(serverID), null);
-        getCollectionConfig().update(new BasicDBObject("_id", serverID), toChange);
+        DBObject config = configToDBObject(configCache.get(serverID));
+        config.putAll(toChange);
+        getCollectionConfig().update(new BasicDBObject("_id", serverID), new BasicDBObject().append("$set", toChange));
+        configCache.put(serverID, dbObjectToConfig(config));
+
     }
 
 
@@ -106,6 +113,25 @@ public class Database {
                 .setMutedRole((String) object.get("mutedRole"))
                 .setDuplicateThreshold((Integer) object.get("duplicateThreshold"));
     }
+
+    /*
+    return new GuildConfig((String) object.get("_id"))
+                .setPrefix((String) object.get("prefix"))
+                .setWhitelistedRoles((ArrayList<String>) object.get("whitelistedRoles"))
+                .setWhitelistedUsers((ArrayList<String>) object.get("whitelistedUsers"))
+                .setSudoRoles((ArrayList<String>) object.get("sudoRoles"))
+                .setSudoUsers((ArrayList<String>) object.get("sudoUsers"))
+                .setBOS((ArrayList<String>) object.get("BOS"))
+                .setMOS((ArrayList<String>) object.get("MOS"))
+                .setDOS((ArrayList<String>) object.get("DOS"))
+                .setEnabledAutoMod((ArrayList<String>) object.get("enabledAutoMod"))
+                .setWhitelistedInvites((ArrayList<String>) object.get("whitelistedInvites"))
+                .setInviteName((String) object.get("inviteName"))
+                .setFallbackName((String) object.get("fallbackName"))
+                .setAuditChannel((String) object.get("auditChannel"))
+                .setMutedRole((String) object.get("mutedRole"))
+                .setDuplicateThreshold((Integer) object.get("duplicateThreshold"));
+     */
 
 
 }

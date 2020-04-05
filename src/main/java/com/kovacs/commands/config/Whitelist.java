@@ -17,10 +17,12 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.mongodb.BasicDBObjectBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -61,12 +63,12 @@ public class Whitelist extends Command {
                 }
         );
 
-            GuildConfig config = GuildConfig.get(event.getGuild().getId());
-            ArrayList<String> whitelistedRoles = config.getWhitelistedRoles();
-            ArrayList<String> whitelistedUsers = config.getWhitelistedUsers();
-            whitelistedRoles.addAll(roles);
-            whitelistedUsers.addAll(members);
-            Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder()
+        GuildConfig config = GuildConfig.get(event.getGuild().getId());
+        ArrayList<String> whitelistedRoles = config.getWhitelistedRoles();
+        ArrayList<String> whitelistedUsers = config.getWhitelistedUsers();
+        Kovacs.addIfMissing(whitelistedRoles, roles);
+        Kovacs.addIfMissing(whitelistedUsers, members);
+         Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder()
                     .add("whitelistedRoles", whitelistedRoles)
             .add("whitelistedUsers", whitelistedUsers).get());
 
