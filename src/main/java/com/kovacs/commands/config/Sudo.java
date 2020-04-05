@@ -18,6 +18,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
+import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
@@ -36,6 +37,12 @@ public class Sudo extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user or have the `Administrator` permission to run this command!");
+            return;
+        }
+
+
         StringBuilder goodLookingString = new StringBuilder();
         List<Role> rolesToSudo = event.getMessage().getMentionedRoles();
         List<Member> membersToSudo = event.getMessage().getMentionedMembers();

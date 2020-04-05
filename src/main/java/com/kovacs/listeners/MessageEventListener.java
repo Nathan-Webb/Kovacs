@@ -42,7 +42,12 @@ public class MessageEventListener  extends ListenerAdapter {
         if(event.getAuthor().isBot()){
             return;
         }
-        if(GuildConfig.get(event.getGuild().getId()).getEnabledAutoMod().contains("duplicates")){
+        GuildConfig config = GuildConfig.get(event.getGuild().getId());
+        if(config.getWhitelistedChannels().contains(event.getChannel().getId())){
+            return;
+        }
+        logger.debug("channel isn't whitelisted!");
+        if(config.getEnabledAutoMod().contains("duplicates")){
             boolean dupe = DupeChecker.addAndCheck(event.getMessage());
             if(dupe){
                 Mute.mute(event.getGuild(), event.getMember(), "Anti-Duplicate triggered.");
@@ -51,6 +56,7 @@ public class MessageEventListener  extends ListenerAdapter {
                         "\nMessage: " + event.getMessage().getContentRaw());
             }
         }
+
         scanMessage(event.getMessage());
     }
 

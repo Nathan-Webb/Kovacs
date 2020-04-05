@@ -58,7 +58,8 @@ public class Kovacs {
             "normalize", "janitor", "invites", "duplicates"};
 
 
-    //todo migrate to non-deprecated version
+    //todo migrate to non-deprecated mongo functions
+    //todo whitelist channels - not working rn
     public static void main(String[] args) throws LoginException, IOException {
         config = BotConfig.open();
         waiter = new EventWaiter(eventWaiterScheduler, false);
@@ -76,7 +77,7 @@ public class Kovacs {
 
     public static CommandClient getCommandClient(){
         Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new Sudo(),
-                new RemoveBOS(), new Blacklist(), new AutoMod(), new SetAuditChannel(),
+                new RemoveBOS(), new Blacklist(), new WhitelistChannels(), new BlacklistChannels(), new AutoMod(), new SetAuditChannel(),
                 new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
                 new Automod(), new SetDuplicateThreshold(), new RemoveDOS(), new RemoveMOS(), new Prefix(),
                 new WhitelistInvites(), new BlackistInvites(), new SetFallbackName(), new SetInviteName()};

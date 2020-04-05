@@ -18,16 +18,24 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
 import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
+import com.kovacs.tools.Cache;
 import com.kovacs.tools.Sanitizers;
 import com.kovacs.tools.Unicode;
+import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ManageNicks extends Command {
     public ManageNicks() {
@@ -43,7 +51,21 @@ public class ManageNicks extends Command {
             event.reply("You must be a sudo user to run this command!");
             return;
         }
+        event.reply("Are you **sure** you want to do this? This loops through __all__ members and has the potential to clean everyone's nickname.\n" +
+                "If you are sure, then respond with `yes`.");
+        Kovacs.waiter.waitForEvent(MessageReceivedEvent.class,
+                check ->  check.getAuthor().equals(event.getMember().getUser()) && check.getChannel().equals(event.getChannel()) && !check.getMessage().equals(event.getMessage()),
+                response -> {
+                    if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
+                        manage(event);
+                    } else {
+                        event.reply("Response was not a `yes`.\n__Not__ cleaning nicknames!");
+                    }
+                },1, TimeUnit.MINUTES, () -> event.reply("Sorry, you took too long! Command failed"));
 
+    }
+
+    private void manage(CommandEvent event){
         String thingToDo = Sanitizers.removeAllMentions(event.getArgs()).toLowerCase().trim();
 
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();

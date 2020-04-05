@@ -16,15 +16,22 @@
 
 package com.kovacs.commands.moderation;
 
+import com.ibm.icu.impl.locale.XCldrStub;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Sanitizers;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.RegEx;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Ban extends Command {
     public Ban() {
@@ -33,23 +40,17 @@ public class Ban extends Command {
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
+    final static Logger logger = LoggerFactory.getLogger(Ban.class);
+
     @Override
     protected void execute(CommandEvent event) {
-        String reason;
-        int delDays;
-        String[] args = event.getArgs().split("\\|");
-        try{
-             reason = args[1];
-        } catch (IndexOutOfBoundsException e){
-            reason = "No reason given";
+        String reason = Sanitizers.removeMetionsAndIdsFromStart(event.getArgs());
+        if(reason.equals("")){
+            reason = "No reason given!";
         }
+        int delDays = getDelDays(reason);
+        String toBan = event.getArgs().replaceFirst(reason, "");
 
-        try {
-            delDays = Integer.parseInt(args[2].trim());
-        } catch (IndexOutOfBoundsException e){
-            delDays = 0;
-        }
-        String toBan = args[0];
         String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(toBan));
 
         List<String> banSuccess = new ArrayList<>();
@@ -58,6 +59,7 @@ public class Ban extends Command {
         Guild g = event.getGuild();
         for(String id : mentions){
             g.ban(id, delDays, reason).queue(success -> banSuccess.add(id), failure -> banFailures.add(id));
+            banSuccess.add(id);
         }
 
         StringBuilder successFailure = new StringBuilder();
@@ -78,5 +80,15 @@ public class Ban extends Command {
             Audit.log(this, event, successFailure.toString());
         }
 
+    }
+
+    private static int getDelDays(String reason){
+        reason = reason.toLowerCase().trim();
+        Pattern pattern = Pattern.compile("d(el(ete)?)? *\\d+$");
+        Matcher matcher = pattern.matcher(reason);
+        if (matcher.find()){
+            return Integer.parseInt(matcher.group().replaceFirst("d(el(ete)?)? ", ""));
+        }
+        return 0;
     }
 }

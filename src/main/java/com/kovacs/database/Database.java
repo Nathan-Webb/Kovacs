@@ -90,12 +90,14 @@ public class Database {
                 .add("fallbackName", config.getFallbackName())
                 .add("auditChannel", config.getAuditChannel())
                 .add("mutedRole", config.getMutedRole())
-                .add("duplicateThreshold", config.getDuplicateThreshold()).get();
+                .add("duplicateThreshold", config.getDuplicateThreshold())
+                .add("whitelistedChannels", config.getWhitelistedChannels()).get();
     }
 
     @SuppressWarnings("unchecked")
     //these unchecked casts make me nervous. is there a way to turn an object into an ArrayList safely?
     public static GuildConfig dbObjectToConfig(DBObject object){
+
         return new GuildConfig((String) object.get("_id"))
                 .setPrefix((String) object.get("prefix"))
                 .setWhitelistedRoles((ArrayList<String>) object.get("whitelistedRoles"))
@@ -111,7 +113,16 @@ public class Database {
                 .setFallbackName((String) object.get("fallbackName"))
                 .setAuditChannel((String) object.get("auditChannel"))
                 .setMutedRole((String) object.get("mutedRole"))
-                .setDuplicateThreshold((Integer) object.get("duplicateThreshold"));
+                .setDuplicateThreshold((Integer) object.get("duplicateThreshold"))
+                .setWhitelistedChannels((ArrayList<String>) getOrNull(object, "whitelistedChannels", new ArrayList<>())); //this has to be the worst way to do this
+    }
+
+    private static Object getOrNull(DBObject object, String toGet, Object defaultObj){
+        Object o = object.get(toGet);
+        if(o == null){
+            return defaultObj;
+        }
+        return o;
     }
 
     /*

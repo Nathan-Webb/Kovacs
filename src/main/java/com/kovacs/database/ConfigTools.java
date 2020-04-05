@@ -59,6 +59,7 @@ public class ConfigTools {
         String authorID = member.getId();
         String guildID = member.getGuild().getId();
         GuildConfig config = GuildConfig.get(guildID);
+
         if(isSudo(member)){
             return false;
         }

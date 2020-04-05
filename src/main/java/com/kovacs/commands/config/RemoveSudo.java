@@ -17,6 +17,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
@@ -35,6 +36,12 @@ public class RemoveSudo extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         List<Member> membersToDesudo = event.getMessage().getMentionedMembers();
         List<Role> rolesToDesudo = event.getMessage().getMentionedRoles();
         StringBuilder goodLookingString = new StringBuilder();

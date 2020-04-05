@@ -23,6 +23,7 @@ import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import com.kovacs.commandclient.CustomClientBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,8 +112,6 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
     }
 
     //-------------------------Message Scanners--------------------------------
-
-
 
 }
 

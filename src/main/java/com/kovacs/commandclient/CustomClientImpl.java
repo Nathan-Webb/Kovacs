@@ -43,6 +43,7 @@ public class CustomClientImpl extends CommandClientImpl {
     public void onEvent(GenericEvent event)
     {
        if(event instanceof MessageReceivedEvent){
+
            if(((MessageReceivedEvent) event).getAuthor().isBot()){
                return;
            }

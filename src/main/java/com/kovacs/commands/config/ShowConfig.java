@@ -43,6 +43,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String[] whiteListedUsers = config.getWhitelistedUsers().toArray(new String[]{});
         String[] whiteListedRoles = config.getWhitelistedRoles().toArray(new String[]{});
         String[] whitelistedInvites = config.getWhitelistedInvites().toArray(new String[]{});
+        String[] whitelistedChannels = config.getWhitelistedChannels().toArray(new String[]{});
         String[] sudoUsers = config.getSudoUsers().toArray(new String[]{});
         String[] sudoRoles = config.getSudoRoles().toArray(new String[]{});
 
@@ -69,6 +70,11 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
             sudoRoleBuilder.append(", ").append("<@&").append(id).append(">");
         }
 
+        StringBuilder whitelistedChannelBuilder = new StringBuilder();
+        for(String id : sudoRoles){
+            whitelistedChannelBuilder.append(", ").append("<@&").append(id).append(">");
+        }
+
         String auditChannel = config.getAuditChannel();
         String mutedRole = config.getMutedRole();
 
@@ -76,6 +82,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         String mentionedRoles = rolebuilder.toString().replaceFirst(", ", "");
         String mentionedSudo  = sudoBuilder.toString().replaceFirst(", ", "");
         String mentionedSudoRoles  = sudoRoleBuilder.toString().replaceFirst(", ", "");
+        String mentionedChannels  = whitelistedChannelBuilder.toString().replaceFirst(", ", "");
 
         String dosStr =  Arrays.deepToString(dos).replaceAll("[\\[\\]]", "");
         String mosStr =  Arrays.deepToString(mos).replaceAll("[\\[\\]]", "");
@@ -86,6 +93,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
                 .addField("Whitelisted Users", (mentionedUsers.equals("") ? "None" : mentionedUsers), true)
                 .addField("Whitelisted Roles", (mentionedRoles.equals("") ? "None" : mentionedRoles), true)
                 .addField("Whitelisted Invites", (inviteStr.equals("") ? "None" : inviteStr), true)
+                .addField("Whitelisted Channels", (mentionedChannels.equals("") ? "None" : inviteStr), true)
                 .addField("Delete-on-sight", (dosStr.equals("") ? "None" : dosStr), false)
                 .addField("Mute-on-sight", (mosStr.equals("") ? "None" : mosStr), true)
                 .addField("Ban-on-sight", (bosStr.equals("") ? "None" : bosStr), true)

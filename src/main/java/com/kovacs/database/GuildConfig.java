@@ -43,6 +43,7 @@ public class GuildConfig implements GuildSettingsProvider {
     private ArrayList<String> MOS = new ArrayList<>();
     private ArrayList<String> enabledAutoMod = new ArrayList<>();
     private ArrayList<String> whitelistedInvites = new ArrayList<>();
+    private ArrayList<String> whitelistedChannels = new ArrayList<>();
 
     final static Logger logger = LoggerFactory.getLogger(GuildConfig.class);
 
@@ -137,6 +138,11 @@ public class GuildConfig implements GuildSettingsProvider {
         return this;
     }
 
+    public GuildConfig setWhitelistedChannels(ArrayList<String> whitelistedChannels) {
+        this.whitelistedChannels = whitelistedChannels;
+        return this;
+    }
+
     public String getAuditChannel() {
         return auditChannel;
     }
@@ -200,4 +206,10 @@ public class GuildConfig implements GuildSettingsProvider {
     public ArrayList<String> getWhitelistedInvites() {
         return whitelistedInvites;
     }
+
+    public ArrayList<String> getWhitelistedChannels() {
+        return whitelistedChannels;
+    }
+
+
 }

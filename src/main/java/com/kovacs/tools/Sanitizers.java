@@ -54,6 +54,11 @@ public class Sanitizers {
         return foundInvites;
     }
 
+    public static String removeMetionsAndIdsFromStart(String s){
+        return s.replaceAll("^(<?[@&!#]{0,}\\d{18,}>? +)+", "").trim();
+    }
+
+
     public static String removeUrlKeepInvite(String s){
         return s.replaceAll("(https?://)?(www\\.)?((discord|invite)\\.(gg|li|me|io)|discordapp\\.co/invite)/", "");
     }
