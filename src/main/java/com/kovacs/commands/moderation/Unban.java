@@ -19,7 +19,7 @@ package com.kovacs.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -37,7 +37,7 @@ public class Unban extends Command {
     @Override
     protected void execute(CommandEvent event) {
 
-        String[] mentions = StringCleaning.extractIDsFromIdealStr(StringCleaning.normalizeSpaces(event.getArgs()));
+        String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(event.getArgs()));
 
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();

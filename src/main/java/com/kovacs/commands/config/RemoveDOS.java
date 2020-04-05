@@ -18,14 +18,15 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class RemoveDOS extends Command {
     public RemoveDOS() {
@@ -35,17 +36,16 @@ public class RemoveDOS extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
+        String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
-        try {
-            Config.removeFromList("dos", words);
-            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload delete on sight
+            ArrayList<String> dos = GuildConfig.get(event.getGuild().getId()).getDOS();
+            if(dos.removeAll(Arrays.asList(words))){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("dos", dos));
+                Cache.DOS.put(event.getGuild().getId(), dos);
+            }
 
             event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Delete-On-Sight list.");
             Audit.log(this, event, "Delete-On-Sight words removed: `" + Arrays.toString(words) + "`.");
 
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
     }
 }

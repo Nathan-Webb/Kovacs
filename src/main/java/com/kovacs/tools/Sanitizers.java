@@ -20,11 +20,38 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.commandclient.CustomClientBuilder;
+import com.kovacs.database.GuildConfig;
 import net.dv8tion.jda.api.Permission;
 
-public class StringCleaning {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Sanitizers {
     public static String normalizeSpaces(String s){
         return s.replaceAll(" +", " "); //any spaces more than 1 will be replaced with one space
+    }
+
+    public static boolean isValidName(String name){
+        if(findInvites(name).size() > 0){
+            return false;
+        }
+
+        if(Unicode.isHoisting(name) || Unicode.cleanEverythingUnsafe(name).equals("")){
+            return false;
+        }
+        return true;
+    }
+
+    public static List<String> findInvites(String s){
+        Pattern pattern = Pattern.compile("(https?://)?(www\\.)?((discord|invite)\\.(gg|li|me|io)|discordapp\\.com/invite)/(\\s)?.+");
+        Matcher matcher = pattern.matcher(s);
+        List<String> foundInvites = new ArrayList<>();
+        while (matcher.find()){
+            foundInvites.add(matcher.group());
+        }
+        return foundInvites;
     }
 
     public static String removeUrlKeepInvite(String s){

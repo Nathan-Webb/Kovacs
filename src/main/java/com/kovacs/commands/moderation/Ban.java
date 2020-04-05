@@ -19,7 +19,7 @@ package com.kovacs.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -50,7 +50,7 @@ public class Ban extends Command {
             delDays = 0;
         }
         String toBan = args[0];
-        String[] mentions = StringCleaning.extractIDsFromIdealStr(StringCleaning.normalizeSpaces(toBan));
+        String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(toBan));
 
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();

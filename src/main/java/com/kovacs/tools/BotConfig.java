@@ -13,20 +13,34 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package com.kovacs.tools;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
+import com.kovacs.Kovacs;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Stuff {
-    public static String getOwnerID(Guild guild){
-        Member owner = guild.getOwner();
-        if(owner != null){
-            return owner.getId();
-        }
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-        return "";
+public class BotConfig {
+    final static Logger logger = LoggerFactory.getLogger(BotConfig.class);
+
+
+    public static void reload() throws IOException {
+        Kovacs.config  = open();
     }
 
+    public static JSONObject open() throws IOException{
+        return new JSONObject(Files.readString(Paths.get("config.json"), StandardCharsets.UTF_8));
+    }
+
+
+
+
+
+
 }
+

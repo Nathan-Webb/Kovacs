@@ -17,13 +17,13 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.Kovacs;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import com.mongodb.BasicDBObjectBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,29 +38,30 @@ public class RemoveSudo extends Command {
         List<Member> membersToDesudo = event.getMessage().getMentionedMembers();
         List<Role> rolesToDesudo = event.getMessage().getMentionedRoles();
         StringBuilder goodLookingString = new StringBuilder();
-        List<String> members = new ArrayList<>();
+        List<String> memberIDs = new ArrayList<>();
         membersToDesudo.forEach(member -> {
             String id = member.getId();
             goodLookingString.append("<@").append(id).append(">, ");
-            members.add(id);
+            memberIDs.add(id);
         });
 
-        List<String> roles = new ArrayList<>();
+        List<String> roleIDs = new ArrayList<>();
         rolesToDesudo.forEach(role -> {
                     String id = role.getId();
                     goodLookingString.append("<@&").append(id).append(">, ");
-                    roles.add(id);
+                    roleIDs.add(id);
                 }
         );
 
-        try {
-            Config.removeFromList("sudo", members.toArray(new String[]{}));
-            Config.removeFromList("sudoRoles", roles.toArray(new String[]{}));
+            GuildConfig guildConfig = GuildConfig.get(event.getGuild().getId());
+            ArrayList<String> sudoUsers = guildConfig.getSudoUsers();
+            ArrayList<String> sudoRoles = guildConfig.getSudoRoles();
+            sudoUsers.removeAll(memberIDs);
+            sudoRoles.removeAll(roleIDs);
+
+            Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder().add("sudoUsers", sudoUsers)
+                    .add("sudoRoles", sudoRoles).get());
             event.reply(":thumbsup:");
             Audit.log(this, event, "Sudo users/roles removed: " + goodLookingString.toString().replaceAll(", $", ""));
-            Kovacs.reloadCommandClient(); //refresh owner list
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
     }
 }

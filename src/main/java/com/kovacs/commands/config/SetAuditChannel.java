@@ -18,11 +18,11 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.entities.TextChannel;
-
-import java.io.IOException;
 
 public class SetAuditChannel extends Command {
     public SetAuditChannel() {
@@ -36,13 +36,11 @@ public class SetAuditChannel extends Command {
             TextChannel textChannel = event.getMessage().getMentionedChannels().get(0);
             String channelName = textChannel.getName();
             String channelId = textChannel.getId();
-            try {
-                Config.setString("auditChannel", channelId);
-                event.reply(":thumbsup: Set `" + channelName + "` as the audit log channel!");
-                Audit.log(this, event, "Audit channel set to: `" + textChannel.getName() + "`");
-            } catch (IOException e) {
-                event.reply("IOException dummy.");
+            if(!GuildConfig.get(event.getGuild().getId()).getAuditChannel().equals(channelId)){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("auditChannel", channelId));
             }
+            event.reply(":thumbsup: Set `" + channelName + "` as the audit log channel!");
+            Audit.log(this, event, "Audit channel set to: `" + textChannel.getName() + "`");
         } catch (IndexOutOfBoundsException e){
             event.reply("Provide a text channel!");
         }

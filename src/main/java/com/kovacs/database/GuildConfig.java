@@ -17,6 +17,8 @@
 package com.kovacs.database;
 
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -24,22 +26,24 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class GuildConfig implements GuildSettingsProvider {
-    private String auditChannel;
-    private String mutedRole;
+    private String auditChannel = "";
+    private String mutedRole = "";
     private String guildID;
     private int duplicateThreshold = 4;
     private String prefix = ".";
     private String inviteName = "invite";
     private String fallbackName = "fallback";
-    private ArrayList<String> whitelistedRoles;
-    private ArrayList<String> sudoRoles;
-    private ArrayList<String> whitelistedUsers;
-    private ArrayList<String> sudoUsers;
-    private ArrayList<String> BOS;
-    private ArrayList<String> DOS;
-    private ArrayList<String> MOS;
-    private ArrayList<String> enabledAutoMod;
+    private ArrayList<String> whitelistedRoles = new ArrayList<>();
+    private ArrayList<String> sudoRoles = new ArrayList<>();
+    private ArrayList<String> whitelistedUsers = new ArrayList<>();
+    private ArrayList<String> sudoUsers = new ArrayList<>();
+    private ArrayList<String> BOS = new ArrayList<>();
+    private ArrayList<String> DOS = new ArrayList<>();
+    private ArrayList<String> MOS = new ArrayList<>();
+    private ArrayList<String> enabledAutoMod = new ArrayList<>();
     private ArrayList<String> whitelistedInvites = new ArrayList<>();
+
+    final static Logger logger = LoggerFactory.getLogger(GuildConfig.class);
 
     public static GuildConfig get(String guildID){
         return Database.configCache.get(guildID);
@@ -53,6 +57,7 @@ public class GuildConfig implements GuildSettingsProvider {
     @Nullable
     @Override
     public Collection<String> getPrefixes() {
+        logger.debug("Requesting prefixes: " + getPrefix());
         return Collections.singleton(getPrefix());
     }
 

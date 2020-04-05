@@ -18,9 +18,7 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.Kovacs;
 import com.kovacs.database.GuildConfig;
-import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,6 @@ public class ShowConfig extends Command {
     public ShowConfig() {
         this.name = "Config";
         this.aliases = new String[]{"showconfig", "settings", "conf", "showconf"};
-        this.ownerCommand = true;
     }
 final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
 
@@ -96,7 +93,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
                 .addField("Muted Role", (mutedRole.equals("") ? "None" : "<@&" + mutedRole + ">"), true)
                 .addField("Fallback Name", config.getFallbackName(), true)
                 .addField("Invite NickName", config.getInviteName(), true)
-                .addField("Duplicate Threshold", String.valueOf(Config.getInt("duplicateThreshold")), true)
+                .addField("Duplicate Threshold", String.valueOf(config.getDuplicateThreshold()), true)
                 .addField("--", automod, false);
         event.reply(builder.build());
 

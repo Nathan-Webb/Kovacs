@@ -24,9 +24,11 @@ import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
+import com.kovacs.commands.owner.ReloadConfig;
+import com.kovacs.commands.owner.Test;
 import com.kovacs.database.GuildConfigManager;
 import com.kovacs.listeners.*;
-import com.kovacs.tools.Config;
+import com.kovacs.tools.BotConfig;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
@@ -50,11 +52,13 @@ public class Kovacs {
     public static EventWaiter waiter;
     private static ScheduledExecutorService eventWaiterScheduler = Executors.newScheduledThreadPool(1);
     public static CommandClient commandClient;
+    public static String[] autoMod = new String[]{"bos", "mos", "dos", "dehoist",
+            "normalize", "janitor", "invites", "duplicates"};
 
 
-
+    //todo UPDATE THE DUPE CHECKER TO FACTOR IN GUILDS BEFORE RELEASING
     public static void main(String[] args) throws LoginException, IOException {
-        config = Config.open();
+        config = BotConfig.open();
         waiter = new EventWaiter(eventWaiterScheduler, false);
         SpoofChecker checker = new SpoofChecker.Builder().setChecks(SpoofChecker.CONFUSABLE).build();
         Unicode.setNormalizer(Normalizer2.getNFKCInstance());
@@ -72,8 +76,8 @@ public class Kovacs {
         Command[] configCommands = new Command[]{new AddBOS(), new AddDOS(), new AddMOS(), new Sudo(),
                 new RemoveBOS(), new Blacklist(), new ReloadConfig(), new AutoMod(), new SetAuditChannel(),
                 new RemoveSudo(), new SetMutedRole(), new ShowConfig(), new Whitelist(), new Sync(),
-                new Automod(), new SetDuplicateThreshold(), new RemoveDOS(), new RemoveMOS(),
-                new WhitelistInvites(), new BlackistInvites()};
+                new Automod(), new SetDuplicateThreshold(), new RemoveDOS(), new RemoveMOS(), new Prefix(),
+                new WhitelistInvites(), new BlackistInvites(), new SetFallbackName(), new SetInviteName()};
 
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
                 new ManageNicks()};
@@ -82,8 +86,7 @@ public class Kovacs {
 
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("botOwner"))
-                .setCoOwnerIds(config.getJSONArray("sudo").toList().toArray(new String[]{}))
-                .setPrefix(config.getString("prefix")) //todo remove this when we move to mongo - guild config will create it by default per-server
+                .setCoOwnerIds(config.getJSONArray("coOwners").toList().toArray(new String[]{}))
                 .setAlternativePrefix("@mention")
                 .addCommands(configCommands)
                 .setGuildSettingsManager(new GuildConfigManager())
@@ -93,15 +96,5 @@ public class Kovacs {
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)
                 .build();
-    }
-    public static void reloadCommandClient(){
-        bot.getRegisteredListeners().forEach(o -> {
-            if(o instanceof  CommandClient){
-                bot.removeEventListener(o);
-
-                logger.debug(((CommandClient) o).getPrefix());
-            }
-        });
-        bot.addEventListener(getCommandClient());
     }
 }

@@ -28,6 +28,6 @@ public class Normalize extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply(Unicode.dehoist(event.getGuild(), Unicode.cleanEverything(event.getArgs())));
+        event.reply(Unicode.dehoist(event.getGuild(), Unicode.cleanEverything(event.getGuild(), event.getArgs())));
     }
 }

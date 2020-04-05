@@ -20,7 +20,6 @@ import com.kovacs.commands.moderation.Mute;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
 import com.kovacs.tools.DupeChecker;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -43,7 +42,7 @@ public class MessageEventListener  extends ListenerAdapter {
         if(event.getAuthor().isBot()){
             return;
         }
-        if(Config.arrayContains("enabledAutoMod", "duplicates")){
+        if(GuildConfig.get(event.getGuild().getId()).getEnabledAutoMod().contains("duplicates")){
             boolean dupe = DupeChecker.addAndCheck(event.getMessage());
             if(dupe){
                 Mute.mute(event.getGuild(), event.getMember(), "Anti-Duplicate triggered.");

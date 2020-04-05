@@ -1,35 +1,9 @@
 {
-  "mutedRole": "692453692124692530",
-  "duplicateThreshold": 4,
   "prefix": ".",
-  "whitelistedRoles": [],
-  "bos": [],
-  "dos": [],
-  "automod": [
-    "bos",
-    "mos",
-    "dos",
-    "dehoist",
-    "normalize",
-    "janitor",
-    "invites",
-    "duplicates"
-  ],
-  "auditChannel": "",
-  "token": "",
-  "mos": [],
-  "inviteName": "naughty person",
-  "root": "102845358677176320",
+  "token": "token-goes-here",
+  "botOwner": "your-user-id-here",
+  "coOwners": [],
   "activityMessage": "the server.",
-  "sudo": [],
-  "sudoRoles": [],
   "activityType": "WATCHING",
-  "whitelistedUsers": [],
-  "enabledAutoMod": [
-    "dehoist",
-    "normalize",
-    "invites"
-  ],
-  "fallbackName": "fallback",
-  "whitelistedInvites": []
+  "mongoDbURI": "database-uri-here"
 }

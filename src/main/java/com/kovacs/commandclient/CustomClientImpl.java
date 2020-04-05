@@ -16,7 +16,6 @@
 package com.kovacs.commandclient;
 
 import com.kovacs.database.ConfigTools;
-import com.kovacs.tools.Config;
 import com.jagrosh.jdautilities.command.*;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -26,7 +25,6 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.events.EventException;
 
 import java.util.ArrayList;
 import java.util.Objects;

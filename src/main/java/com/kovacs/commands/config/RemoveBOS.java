@@ -18,35 +18,40 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class RemoveBOS extends Command {
     public RemoveBOS() {
         this.name = "RemoveBOS";
         this.aliases = new String[]{"rbos", "rmbos"};
-        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" "); //split based on
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
 
-        try {
-            Config.removeFromList("bos", words);
-            Cache.BOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload ban on sight
+        String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" "); //split based on spaces
+
+            ArrayList<String> bos = GuildConfig.get(event.getGuild().getId()).getBOS();
+            if(bos.removeAll(Arrays.asList(words))){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
+                Cache.BOS.put(event.getGuild().getId(), bos);
+            }
 
             event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Ban-On-Sight list.");
             Audit.log(this, event, "Ban-On-Sight words removed: `" + Arrays.toString(words) + "`.");
 
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
     }
 }

@@ -18,26 +18,35 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Config;
-
-import java.io.IOException;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.tools.Audit;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
 public class SetFallbackName extends Command {
     public SetFallbackName() {
         this.name = "SetFallbackName";
         this.aliases = new String[]{};
-        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         String name = event.getMessage().getContentRaw();
         if(name.length() <= 32 && name.length() >= 2){
-            try {
-                Config.setString("fallbackName", name);
-            } catch (IOException e) {
-                event.reply("IOException dummy.");
-            }
+           if(Sanitizers.isValidName(name)){
+               Database.updateConfig(event.getGuild().getId(), new BasicDBObject("fallbackName", name));
+               event.reply(":thumbsup: Fallback name changed to `" + name + "`.");
+               Audit.log(this, event, "Fallback name changed to `" + name + "`.");
+
+           } else {
+               event.reply("You cannot use this nickname! Bad things will happen! (Like infinite loops)");
+           }
         } else {
             event.reply("Your chosen name must be between 32 and 2 characters!");
         }

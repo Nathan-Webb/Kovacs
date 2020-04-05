@@ -18,7 +18,7 @@ package com.kovacs.listeners;
 
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -59,8 +59,8 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
         return new AutoModResponse(toCheck, AutoModActions.NOTHING, "", "mos");
     }
 
-    public static AutoModResponse normalizeOnSight(String toCheck){
-        String cleaned = Unicode.cleanEverything(toCheck);
+    public static AutoModResponse normalizeOnSight(Guild g, String toCheck){
+        String cleaned = Unicode.cleanEverything(g, toCheck);
         if(!cleaned.equalsIgnoreCase(toCheck)){ //strings are different - cleaned
             return new AutoModResponse(cleaned, AutoModActions.CLEAN, "", "normalize");
         }
@@ -84,7 +84,7 @@ final static Logger logger = LoggerFactory.getLogger(AutoModder.class);
             foundInvites.add(matcher.group());
         }
         foundInvites.removeIf(foundInvite -> GuildConfig.get(guild.getId()).getWhitelistedInvites().stream()
-                .anyMatch(whitelistedInvite -> whitelistedInvite.equalsIgnoreCase(StringCleaning.removeUrlKeepInvite(foundInvite))));
+                .anyMatch(whitelistedInvite -> whitelistedInvite.equalsIgnoreCase(Sanitizers.removeUrlKeepInvite(foundInvite))));
         if(foundInvites.size() > 0) {
                 return new AutoModResponse("", AutoModActions.INVITES, foundInvites.toString(), "invites");
         }

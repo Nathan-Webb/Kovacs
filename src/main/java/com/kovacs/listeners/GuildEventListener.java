@@ -17,8 +17,12 @@
 package com.kovacs.listeners;
 
 import com.kovacs.database.ConfigTools;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -33,7 +37,26 @@ public class GuildEventListener extends ListenerAdapter {
 
 final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
 
-     @Override
+    @Override
+    public void onGuildJoin(@Nonnull GuildJoinEvent event) {
+        String setup = "Thank you for adding Kovacs. Hopefully it exceeds your expectations.\n" +
+                "When you invite the bot, only the Guild owner and users with the `Administrator` permission are able to use the bot\n" +
+                "They can whitelist users and/or roles with the `whitelist` command. For example: " + event.getJDA().getSelfUser().getAsMention() + "whitelist @user1 @user2 @role1 @role2.\n" +
+                "It is recommended to read most if not all of the Wiki: https://github.com/Nathan-Webb/Kovacs/wiki.";
+        for(TextChannel channel : event.getGuild().getTextChannels()){
+            if(channel.canTalk()){
+                channel.sendMessage(setup).queue();
+                return;
+            }
+        }
+        //whoops couldn't find any channels to send a message to
+        Member m = event.getGuild().getOwner();
+        if(m != null){
+            m.getUser().openPrivateChannel().queue(c -> c.sendMessage(setup + "\n This message was sent to you because I **do not** have permission to `Send Messages` in any channel. You might want to fix that...").queue());
+        }
+    }
+
+    @Override
     public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
          if(event.getUser().isBot()){
              return;
@@ -43,7 +66,7 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
 
     @Override
     public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event) { //not filtering bots because sometimes they can leave invites lying around
-        if(ConfigTools.canUseBot(event.getMember()) && !Config.arrayContains("enabledAutoMod", "janitor")){
+        if(ConfigTools.canUseBot(event.getMember()) && !GuildConfig.get(event.getGuild().getId()).getEnabledAutoMod().contains("janitor")){
             return;
         }
         logger.debug("Janitor Triggered.");

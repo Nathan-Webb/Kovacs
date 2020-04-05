@@ -18,7 +18,6 @@ package com.kovacs.commands.generic;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
@@ -34,7 +33,7 @@ public class Info extends Command {
 
         EmbedBuilder infoEmbed = new EmbedBuilder();
         infoEmbed.setColor(Color.ORANGE)
-                .addField("Bot Owner", "<@" + Config.getString("botOwner") + ">", false)
+                .addField("Bot Owner", "<@" + event.getClient().getOwnerId() + ">", false)
                 .addField("Library", "[DV8FromTheWorld/JDA](https://github.com/DV8FromTheWorld/JDA)", false)
                 .addField("Github", "[Nathan-Webb/Kovacs](https://github.com/Nathan-Webb/Kovacs)", false);
         event.reply(infoEmbed.build());

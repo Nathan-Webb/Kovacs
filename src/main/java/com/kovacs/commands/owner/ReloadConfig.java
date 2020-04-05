@@ -13,34 +13,33 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.kovacs.commands.generic;
-
+package com.kovacs.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.StringCleaning;
-import com.kovacs.tools.Unicode;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kovacs.tools.Audit;
+import com.kovacs.tools.BotConfig;
 
-import java.util.Arrays;
+import java.io.IOException;
 
-public class Test extends Command {
-    final static Logger logger = LoggerFactory.getLogger(Test.class);
-
-
-
-
-    public Test() {
-        this.name = "test";
+public class ReloadConfig extends Command {
+    public ReloadConfig() {
+        this.name = "ReloadConfig";
+        this.aliases = new String[]{"reloadconf", "configreload", "rlconf"};
         this.ownerCommand = true;
-        this.aliases = new String[]{"t"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply("test");
+        try{
+            BotConfig.reload();
+            event.reply("Reloaded Config!");
+            Audit.log(this, event, "Config Reloaded");
+        } catch (IOException e){
+            event.reply("IOException dummy.");
+        }
+
     }
+
 
 }

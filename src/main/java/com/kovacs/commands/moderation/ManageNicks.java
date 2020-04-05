@@ -18,8 +18,10 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Member;
 import org.slf4j.Logger;
@@ -31,14 +33,18 @@ public class ManageNicks extends Command {
     public ManageNicks() {
         this.name = "ManageNicks";
         this.aliases = new String[]{"nicks", "nick"};
-        this.ownerCommand = true;
     }
 
     final static Logger logger = LoggerFactory.getLogger(ManageNicks.class);
 
     @Override
     protected void execute(CommandEvent event) {
-        String thingToDo = StringCleaning.removeAllMentions(event.getArgs()).toLowerCase().trim();
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
+        String thingToDo = Sanitizers.removeAllMentions(event.getArgs()).toLowerCase().trim();
 
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
         if(mentionedMembers.size() == 0){
@@ -57,12 +63,14 @@ public class ManageNicks extends Command {
             }
 
             if(thingToDo.equals("normalize") || thingToDo.equals("clean")) { //if we are normalizing or cleaning
-                name = Unicode.cleanEverything(name);
+                name = Unicode.cleanEverything(event.getGuild(), name);
             }
 
-
+            if(name.equals("")){ //uh oh! empty nickname
+                name = GuildConfig.get(event.getGuild().getId()).getFallbackName();
+            }
             if(!name.equalsIgnoreCase(member.getEffectiveName())){ //ended up with different name
-                if(event.getSelfMember().canInteract(member)){
+                if(event.getSelfMember().canInteract(member)){ // can we actually modify their nick?
                     member.modifyNickname(name).queue();
                     try{
                         Thread.sleep(1000);

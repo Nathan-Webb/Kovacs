@@ -18,11 +18,15 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.Kovacs;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,25 +34,31 @@ public class AutomodEnable extends Command {
     public AutomodEnable() {
         this.name = "AutomodEnable";
         this.aliases = new String[]{"enable", "add"};
-        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         String automod = event.getArgs().toLowerCase();
-        String[] splitAutoMod = StringCleaning.normalizeSpacesClearCommas(automod).split(" ");
+        String[] splitAutoMod = Sanitizers.normalizeSpacesClearCommas(automod).split(" ");
 
         List<String> splitList = Arrays.asList(splitAutoMod);
-        List<String> autoModList = Config.getList("automod");
+        List<String> autoModList = Arrays.asList(Kovacs.autoMod);
         if(autoModList.containsAll(splitList)){
-            try {
-                Config.addToList("enabledAutoMod", splitAutoMod);
+
+                GuildConfig config = GuildConfig.get(event.getGuild().getId());
+                ArrayList<String> automodConfig = config.getEnabledAutoMod();
+
+                if(automodConfig.addAll(autoModList)){ //any actual changes made
+                    Database.updateConfig(event.getGuild().getId(), new BasicDBObject("enabledAutoMod", automodConfig));
+                }
                 event.reply("Enabled " + automod);
                 Audit.log(this, event, "Automod features enabled: `" + Arrays.toString(splitAutoMod) + "`.");
 
-            } catch (IOException e) {
-                event.reply("IOException Dummy.");
-            }
         } else {
             event.reply("One of your provided options are not valid! The available options are: `" + autoModList.toString() + "`.");
         }

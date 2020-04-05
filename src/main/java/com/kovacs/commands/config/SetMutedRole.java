@@ -18,32 +18,35 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.entities.Role;
-
-import java.io.IOException;
 
 public class SetMutedRole extends Command {
     public SetMutedRole() {
         this.name = "SetMutedRole";
         this.aliases = new String[]{};
-        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         try {
             Role r = event.getMessage().getMentionedRoles().get(0);
             String roleName = r.getName();
             String roleID = r.getId();
-            try {
-                Config.setString("mutedRole", roleID);
-                event.reply(":thumbsup: Set `" + roleName + "` as the muted role!");
-                Audit.log(this, event, "Muted role set to: `" + r.getName() + "`");
-            } catch (IOException e) {
-                event.reply("IOException dummy.");
+            if(!roleID.equals(GuildConfig.get(event.getGuild().getId()).getMutedRole())){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("mutedRole", roleID));
             }
+            event.reply(":thumbsup: Set `" + roleName + "` as the muted role!");
+            Audit.log(this, event, "Muted role set to: `" + r.getName() + "`");
         } catch (IndexOutOfBoundsException e){
             event.reply("Provide a role!");
         }

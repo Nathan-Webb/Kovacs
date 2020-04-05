@@ -17,12 +17,14 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import com.mongodb.BasicDBObjectBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +32,15 @@ public class Whitelist extends Command {
     public Whitelist() {
         this.name = "Whitelist";
         this.aliases = new String[]{"wlist", "wl"};
-        this.ownerCommand = true;
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         List<Role> rolesToWhitelist = event.getMessage().getMentionedRoles();
         List<Member> membersToWhitelist = event.getMessage().getMentionedMembers();
 
@@ -55,13 +61,17 @@ public class Whitelist extends Command {
                 }
         );
 
-        try {
-            Config.addToList("whitelistedRoles", roles.toArray(new String[]{}));
-            Config.addToList("whitelistedUsers", members.toArray(new String[]{}));
+            GuildConfig config = GuildConfig.get(event.getGuild().getId());
+            ArrayList<String> whitelistedRoles = config.getWhitelistedRoles();
+            ArrayList<String> whitelistedUsers = config.getWhitelistedUsers();
+            whitelistedRoles.addAll(roles);
+            whitelistedUsers.addAll(members);
+            Database.updateConfig(event.getGuild().getId(), new BasicDBObjectBuilder()
+                    .add("whitelistedRoles", whitelistedRoles)
+            .add("whitelistedUsers", whitelistedUsers).get());
+
             event.reply(":thumbsup:");
             Audit.log(this, event, "Users/Roles whitelisted: " + goodLookingString.toString().replaceFirst(", $", "") + ".");
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
+
     }
 }

@@ -13,33 +13,29 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.kovacs.commands.config;
+package com.kovacs.commands.owner;
+
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+public class Test extends Command {
+    final static Logger logger = LoggerFactory.getLogger(Test.class);
 
-public class ReloadConfig extends Command {
-    public ReloadConfig() {
-        this.name = "ReloadConfig";
-        this.aliases = new String[]{"reloadconf", "configreload", "rlconf"};
+
+
+
+    public Test() {
+        this.name = "test";
         this.ownerCommand = true;
+        this.aliases = new String[]{"t"};
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        try{
-            Config.reload();
-            event.reply("Reloaded Config!");
-            Audit.log(this, event, "Config Reloaded");
-        } catch (IOException e){
-            event.reply("IOException dummy.");
-        }
-
+        event.reply("test");
     }
-
 
 }

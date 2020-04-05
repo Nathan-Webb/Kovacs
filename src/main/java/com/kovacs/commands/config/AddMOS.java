@@ -18,14 +18,15 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class AddMOS extends Command {
     public AddMOS() {
@@ -35,17 +36,16 @@ public class AddMOS extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
+        String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
-        try {
-            Config.addToList("mos", words);
-            Cache.DOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload mute on sight
+            ArrayList<String> MOS = GuildConfig.get(event.getGuild().getId()).getMOS();
+            if(MOS.addAll(Arrays.asList(words))){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("mos", MOS));
+                Cache.MOS.put(event.getGuild().getId(), MOS);
+            }
 
             event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Mute-On-Sight list.");
             Audit.log(this, event, "Mute-On-Sight words added: `" + Arrays.toString(words) + "`.");
 
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
     }
 }

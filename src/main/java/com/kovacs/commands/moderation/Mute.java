@@ -18,10 +18,9 @@ package com.kovacs.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -37,7 +36,7 @@ public class Mute extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String reason = StringCleaning.removeAllMentions(event.getArgs());
+        String reason = Sanitizers.removeAllMentions(event.getArgs());
         StringBuilder fancyString = new StringBuilder();
         event.getMessage().getMentionedMembers().forEach(member -> {
             fancyString.append("<@").append(member.getId()).append("> ");

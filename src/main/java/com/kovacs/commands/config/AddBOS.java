@@ -19,34 +19,35 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
+import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class AddBOS extends Command {
     public AddBOS() {
         this.name = "AddBOS";
         this.aliases = new String[]{"bos"};
-        this.ownerCommand = true;
     }
 final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+        String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
     event.reply("Are you __sure__ you want to do this? __All__ of these words will be added: `" + Arrays.toString(words) + "`" +
             "\nTf they are detected in **USERNAMES** or in **MESSAGES** the users responsible will be __**BANNED**__." +
@@ -56,19 +57,16 @@ final static Logger logger = LoggerFactory.getLogger(AddBOS.class);
             check ->  check.getAuthor().equals(event.getMember().getUser()) && check.getChannel().equals(event.getChannel()) && !check.getMessage().equals(event.getMessage()),
             response -> {
         if(response.getMessage().getContentStripped().toLowerCase().contains("yes")){
-            try {
 
-                Config.addToList("bos", words);
                 ArrayList<String> bos = GuildConfig.get(event.getGuild().getId()).getBOS();
-                bos.addAll(Arrays.asList(words));
-                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
+                if(bos.addAll(Arrays.asList(words))){
+                    Database.updateConfig(event.getGuild().getId(), new BasicDBObject("bos", bos));
+                    Cache.BOS.put(event.getGuild().getId(), bos);
+                }
 
-                Cache.BOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload ban on sight
                 event.reply(":thumbsup: Added `" + Arrays.toString(words) + "` to Ban-on-sight list.");
                 Audit.log(this, event, "Ban-On-Sight words added: `" + Arrays.toString(words) + "`.");
-            }catch (IOException e){
-                event.reply("IOException dummy");
-            }
+
         } else {
             event.reply("Response was not a `yes`.\n__Not__ adding to Ban-on-sight list!");
         }

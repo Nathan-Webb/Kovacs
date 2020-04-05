@@ -18,11 +18,13 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BlackistInvites extends Command {
@@ -33,17 +35,15 @@ public class BlackistInvites extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.removeUrlKeepInvite(
-                StringCleaning.normalizeSpacesClearCommas(event.getArgs())).split(" ");
+        String[] invites = Sanitizers.removeUrlKeepInvite(Sanitizers.normalizeSpacesClearCommas(event.getArgs())).split(" ");
 
-        try {
-            Config.removeFromList("whitelistedInvites", words);
-
-            event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Whitelisted invites.");
-            Audit.log(this, event, "Whitelisted invites removed: `" + Arrays.toString(words) + "`.");
-
-        }catch (IOException e){
-            event.reply("IOException dummy");
+        ArrayList<String> whitelistedInvites = GuildConfig.get(event.getGuild().getId()).getWhitelistedInvites();
+        if(whitelistedInvites.removeAll(Arrays.asList(invites))){
+            Database.updateConfig(event.getGuild().getId(), new BasicDBObject("whitelistedInvites", whitelistedInvites));
         }
+
+        event.reply(":thumbsup: Removed `" + Arrays.toString(invites) + "` from Whitelisted invites.");
+        Audit.log(this, event, "Whitelisted invites removed: `" + Arrays.toString(invites) + "`.");
+
     }
 }

@@ -18,14 +18,15 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.Database;
+import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class RemoveMOS extends Command {
     public RemoveMOS() {
@@ -35,17 +36,15 @@ public class RemoveMOS extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] words = StringCleaning.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
+        String[] words = Sanitizers.normalizeSpacesClearCommas(event.getArgs().toLowerCase()).split(" ");
 
-        try {
-            Config.removeFromList("mos", words);
-            Cache.MOS.reloadAll(Collections.singleton(event.getGuild().getId()), null); //reload mute on sight
+            ArrayList<String> mos = GuildConfig.get(event.getGuild().getId()).getMOS();
+            if(mos.removeAll(Arrays.asList(words))){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("mos", mos));
+                Cache.MOS.put(event.getGuild().getId(), mos);
+            }
 
             event.reply(":thumbsup: Removed `" + Arrays.toString(words) + "` from Mute-On-Sight list.");
             Audit.log(this, event, "Mute-On-Sight words removed: `" + Arrays.toString(words) + "`.");
-
-        }catch (IOException e){
-            event.reply("IOException dummy");
-        }
     }
 }

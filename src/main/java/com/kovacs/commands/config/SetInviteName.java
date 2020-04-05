@@ -18,26 +18,35 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.tools.Config;
+import com.kovacs.database.ConfigTools;
+import com.kovacs.database.Database;
+import com.kovacs.tools.Audit;
+import com.kovacs.tools.Sanitizers;
+import com.mongodb.BasicDBObject;
 
-import java.io.IOException;
 
 public class SetInviteName extends Command {
     public SetInviteName() {
         this.name = "SetInviteName";
         this.aliases = new String[]{};
-        this.ownerCommand = true;
 
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         String name = event.getMessage().getContentRaw();
         if(name.length() <= 32 && name.length() >= 2){
-            try {
-                Config.setString("inviteName", name);
-            } catch (IOException e) {
-                event.reply("IOException dummy.");
+            if(Sanitizers.isValidName(name)){
+                Database.updateConfig(event.getGuild().getId(), new BasicDBObject("inviteName", name));
+                event.reply(":thumbsup: Invite name changed to `" + name + "`.");
+                Audit.log(this, event, "Invite name changed to `" + name + "`.");
+            } else {
+                event.reply("You cannot use this nickname! Bad things will happen! (Like infinite loops)");
             }
         } else {
             event.reply("Your chosen name must be between 32 and 2 characters!");

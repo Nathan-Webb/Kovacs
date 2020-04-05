@@ -20,7 +20,6 @@ import com.kovacs.commands.moderation.Mute;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
@@ -83,7 +82,7 @@ public class NameEventListener extends ListenerAdapter {
         }
 
         if(enabledAutomod.contains("normalize")){
-            responses.add(AutoModder.normalizeOnSight(name));
+            responses.add(AutoModder.normalizeOnSight(member.getGuild(), name));
         }
         if(enabledAutomod.contains("dehoist")){
             responses.add(AutoModder.dehoistOnSight(member.getGuild(), name));
@@ -142,7 +141,7 @@ public class NameEventListener extends ListenerAdapter {
 
         if(clean && dehoist){ //both
             logger.debug("Dehoist and Clean triggered.");
-            String newName = AutoModder.dehoistOnSight(member.getGuild(), AutoModder.normalizeOnSight(name).getModeratedString())
+            String newName = AutoModder.dehoistOnSight(member.getGuild(), AutoModder.normalizeOnSight(member.getGuild(), name).getModeratedString())
                     .getModeratedString();
 
             member.modifyNickname(newName).queue();

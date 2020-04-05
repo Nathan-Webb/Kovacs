@@ -22,6 +22,7 @@ import org.cache2k.Cache2kBuilder;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
@@ -48,13 +49,16 @@ public class Database {
     }
 
     public static DBCollection getCollectionConfig(){
-        return client.getDB("Kovacs").getCollection("serverConfig");
+        return client.getDB("kovacs").getCollection("serverConfig");
     }
 
 
     public static void updateConfig(String serverID, DBObject toChange){
+        configCache.reloadAll(Collections.singleton(serverID), null);
         getCollectionConfig().update(new BasicDBObject("_id", serverID), toChange);
     }
+
+
 
     public static MongoClient getClient(){
         return client;

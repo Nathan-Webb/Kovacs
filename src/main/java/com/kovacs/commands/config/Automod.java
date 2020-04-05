@@ -18,10 +18,8 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.database.Database;
+import com.kovacs.Kovacs;
 import com.kovacs.database.GuildConfig;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
 
 import java.util.List;
 
@@ -41,12 +39,11 @@ public class Automod extends Command {
 
     public static String getAutoModSettings(String guildID){
         GuildConfig config = GuildConfig.get(guildID);
-        List<String> automodList = Config.getList("automod");
         List<String> enabledAutomod = config.getEnabledAutoMod();
         StringBuilder builder = new StringBuilder();
         builder.append("**AutoMod**\n");
         int i = 0;
-        for(String automod : automodList){
+        for(String automod : Kovacs.autoMod){
             if(enabledAutomod.contains(automod)){
                 builder.append(":green_square: ").append(automod);
             } else {

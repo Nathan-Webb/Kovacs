@@ -18,11 +18,10 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
 import com.kovacs.database.GuildConfig;
-import com.kovacs.tools.Config;
-
-import java.io.IOException;
+import com.mongodb.BasicDBObject;
 
 public class Prefix extends Command {
     public Prefix() {
@@ -32,16 +31,22 @@ public class Prefix extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if(!ConfigTools.isSudo(event.getMember())){
+            event.reply("You must be a sudo user to run this command!");
+            return;
+        }
+
         String args = event.getArgs();
         if(args.length() > 0){
             if(args.length() <= 5){
-                try {
-                    Config.setString("prefix", args);
-                    event.reply(":thumbsup: Prefix set to `" + args + "`" +
-                            "\nYou can also use " + event.getSelfMember().getAsMention() + ".");
-                } catch (IOException e) {
-                    event.reply("IOException dummy.");
+                String prefix = GuildConfig.get(event.getGuild().getId()).getPrefix();
+                if(!prefix.equals(args)){
+                    Database.updateConfig(event.getGuild().getId(), new BasicDBObject("prefix", args));
                 }
+
+                event.reply(":thumbsup: Prefix set to `" + args + "`" +
+                        "\nYou can also use " + event.getSelfMember().getAsMention() + "" +
+                        "\nFor example: " + event.getSelfMember().getAsMention() + " help");
             } else {
                 event.reply("The maximum prefix length is `5`");
             }

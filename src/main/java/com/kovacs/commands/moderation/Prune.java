@@ -20,8 +20,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Config;
-import com.kovacs.tools.StringCleaning;
+import com.kovacs.tools.Sanitizers;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Prune extends Command {
     public Prune() {
@@ -46,8 +44,8 @@ public class Prune extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String args = event.getArgs();
-        args = StringCleaning.normalizeSpaces(args);
-        String[] extractedIds = StringCleaning.extractIDsFromIdealStr(args);
+        args = Sanitizers.normalizeSpaces(args);
+        String[] extractedIds = Sanitizers.extractIDsFromIdealStr(args);
         String amount = extractedIds[extractedIds.length - 1];
         String[] idsToPrune = new String[extractedIds.length - 1];
         //leave last arg for max/all/numOfMessages

@@ -76,7 +76,15 @@ final static Logger logger = LoggerFactory.getLogger(Unicode.class);
                 ;
     }
 
-    public static String cleanEverything(String string){
+    public static String cleanEverything(Guild g, String string){
+        String cleaned = cleanEverythingUnsafe(string);
+        if(cleaned.equals("")){
+            cleaned = GuildConfig.get(g.getId()).getFallbackName();
+        }
+        return cleaned;
+    }
+
+    public static String cleanEverythingUnsafe(String string){
         return EmojiParser.removeAllEmojis(normalizeAndRemoveUselessChars(string));
     }
 

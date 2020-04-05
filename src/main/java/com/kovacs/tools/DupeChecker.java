@@ -16,7 +16,12 @@
 
 package com.kovacs.tools;
 
+import com.kovacs.database.GuildConfig;
 import net.dv8tion.jda.api.entities.Message;
+import net.ricecode.similarity.JaroWinklerStrategy;
+import net.ricecode.similarity.SimilarityStrategy;
+import net.ricecode.similarity.StringSimilarityService;
+import net.ricecode.similarity.StringSimilarityServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +40,9 @@ public class DupeChecker {
             duplicates.put(userID, new Duplicate(userID, messageStr));
             return false;
         }
-        if(duplicate.getMessage().equalsIgnoreCase(messageStr)){ //found dupe
+        if(areSimilar(duplicate.getMessage(), messageStr)){ //found dupe
             int dupeAmount = duplicate.getAndAddOne();
-            if(dupeAmount > Config.getInt("duplicateThreshold")){ //uh oh! more than N duplicate messages!
+            if(dupeAmount > GuildConfig.get(message.getGuild().getId()).getDuplicateThreshold()){ //uh oh! more than N duplicate messages!
                 duplicates.put(userID, duplicate);
                 return true;
             } else {
@@ -49,5 +54,14 @@ public class DupeChecker {
             duplicates.put(userID, duplicate);
             return false;
         }
+    }
+
+    //todo we need to test this
+    public static boolean areSimilar(String string1, String string2){
+       SimilarityStrategy strategy = new JaroWinklerStrategy();
+        StringSimilarityService service = new StringSimilarityServiceImpl(strategy);
+        double score = service.score(string1, string2); // Score is 0.90
+        logger.debug(String.valueOf(score));
+        return score > 0.95;
     }
 }
