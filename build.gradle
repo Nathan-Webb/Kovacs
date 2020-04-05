@@ -32,8 +32,13 @@ dependencies {
 
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
-
+jar {
+    manifest {
+        attributes 'Main-Class' : 'com.kovacs.Kovacs'
+    }
+}
 shadowJar {
     baseName = 'Kovacs'
+    classifier = ''
 }
 compileJava.options.encoding = 'UTF-8'
