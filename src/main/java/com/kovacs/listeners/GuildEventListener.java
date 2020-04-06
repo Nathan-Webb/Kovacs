@@ -19,6 +19,7 @@ package com.kovacs.listeners;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.GuildConfig;
 import com.kovacs.tools.Audit;
+import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -69,22 +70,23 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
         if(ConfigTools.canUseBot(event.getMember()) && !GuildConfig.get(event.getGuild().getId()).getEnabledAutoMod().contains("janitor")){
             return;
         }
-        logger.debug("Janitor Triggered.");
-            event.getGuild().retrieveInvites().complete().forEach(invite ->  {
-                try {
-                    boolean foundInvites = false;
-                    if (Objects.requireNonNull(invite.getInviter()).getId().equals(event.getMember().getId())) {
-                        invite.delete().queue();
-                        foundInvites = true;
-                    }
-                    if(foundInvites){
-                        Audit.log(event.getGuild(), event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
-                                event.getJDA().getSelfUser().getAvatarUrl(), "Clearing all " +
-                                        "invites made by <@" + event.getMember().getId() + "> because they left the server.");
-                    }
-                } catch (NullPointerException e){
-                    //do nothing
+
+        boolean foundInvites = false;
+        for (Invite invite : event.getGuild().retrieveInvites().complete()) {
+            try {
+                if (Objects.requireNonNull(invite.getInviter()).getId().equals(event.getMember().getId())) {
+                    invite.delete().reason("Janitor Triggered. They left the server.").queue();
+                    foundInvites = true;
                 }
-            });
+            } catch (NullPointerException e) { //invite has no inviter
+                //do nothing
+            }
+        }
+        if(foundInvites){
+            logger.debug("Janitor Triggered.");
+            Audit.log(event.getGuild(), event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
+                    event.getJDA().getSelfUser().getAvatarUrl(), "Clearing all " +
+                            "invites made by <@" + event.getMember().getId() + "> because they left the server.");
+        }
     }
 }

@@ -59,7 +59,6 @@ public class Kovacs {
 
 
     //todo migrate to non-deprecated mongo functions
-    //todo whitelist channels - not working rn
     public static void main(String[] args) throws LoginException, IOException {
         config = BotConfig.open();
         waiter = new EventWaiter(eventWaiterScheduler, false);

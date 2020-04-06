@@ -46,7 +46,6 @@ public class MessageEventListener  extends ListenerAdapter {
         if(config.getWhitelistedChannels().contains(event.getChannel().getId())){
             return;
         }
-        logger.debug("channel isn't whitelisted!");
         if(config.getEnabledAutoMod().contains("duplicates")){
             boolean dupe = DupeChecker.addAndCheck(event.getMessage());
             if(dupe){
