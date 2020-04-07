@@ -36,11 +36,5 @@ public class BotConfig {
     public static JSONObject open() throws IOException{
         return new JSONObject(Files.readString(Paths.get("config.json"), StandardCharsets.UTF_8));
     }
-
-
-
-
-
-
 }
 

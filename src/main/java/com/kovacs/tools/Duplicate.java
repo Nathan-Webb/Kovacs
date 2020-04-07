@@ -20,10 +20,12 @@ public class Duplicate {
     private int amountSent;
     private String userID;
     private String message;
+    private long epochOfLastMessage;
 
-    public Duplicate(String userID, String message){
+    public Duplicate(String userID, String message, long epochOfMessage){
         this.userID = userID;
         this.message = message;
+        this.epochOfLastMessage = epochOfMessage;
         amountSent = 0;
     }
 
@@ -44,8 +46,13 @@ public class Duplicate {
         return message;
     }
 
-    public void resetWithNewMessage(String s){
+    public void resetWithNewMessage(String s, long epochOfMessage){
         this.amountSent = 0;
         this.message = s;
+        this.epochOfLastMessage = epochOfMessage;
+    }
+
+    public long getEpochOfLastMessage() {
+        return epochOfLastMessage;
     }
 }

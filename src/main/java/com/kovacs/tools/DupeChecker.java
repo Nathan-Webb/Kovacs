@@ -25,24 +25,32 @@ import net.ricecode.similarity.StringSimilarityServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 
 public class DupeChecker {
     private static HashMap<String, HashMap<String, Duplicate>> duplicates = new HashMap<>();
-
     final static Logger logger = LoggerFactory.getLogger(DupeChecker.class);
 
     public static boolean addAndCheck(Message message){
+        long epochOfMessage = message.getTimeCreated().toEpochSecond();
         String guildID = message.getGuild().getId();
         String userID = message.getAuthor().getId();
         String messageStr = message.getContentRaw();
         HashMap<String, Duplicate> serverDupes = duplicates.getOrDefault(guildID, new HashMap<>());
         Duplicate duplicate = serverDupes.get(userID);
         if(duplicate == null){
-            serverDupes.put(userID, new Duplicate(userID, messageStr));
+            serverDupes.put(userID, new Duplicate(userID, messageStr, OffsetDateTime.now().toEpochSecond()));
             duplicates.put(guildID, serverDupes);
             return false;
         }
+
+        long epochOfLastMessage = duplicate.getEpochOfLastMessage();
+        if(epochOfMessage - epochOfLastMessage >= 60){ //more than a minute apart - not spam
+            serverDupes.put(userID, new Duplicate(userID, messageStr, OffsetDateTime.now().toEpochSecond()));
+            return false;
+        }
+
         if(areSimilar(duplicate.getMessage(), messageStr)){ //found dupe
             int dupeAmount = duplicate.getAndAddOne();
             if(dupeAmount > GuildConfig.get(message.getGuild().getId()).getDuplicateThreshold()){ //uh oh! more than N duplicate messages!
@@ -55,7 +63,7 @@ public class DupeChecker {
                 return false;
             }
         } else { //not dupe
-            duplicate.resetWithNewMessage(messageStr);
+            duplicate.resetWithNewMessage(messageStr, epochOfMessage);
             serverDupes.put(userID, duplicate);
             duplicates.put(guildID, serverDupes);
             return false;

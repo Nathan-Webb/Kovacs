@@ -23,7 +23,7 @@ import com.kovacs.tools.Unicode;
 public class Normalize extends Command {
     public Normalize() {
         this.name = "Normalize";
-        this.aliases = new String[]{"unfuck", "clearMyHeadache", "cureMyHeadache"};
+        this.aliases = new String[]{"norm", "clean"};
     }
 
     @Override
