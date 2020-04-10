@@ -22,8 +22,11 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.commandclient.CustomClientBuilder;
 import com.kovacs.database.GuildConfig;
 import net.dv8tion.jda.api.Permission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,8 +57,8 @@ public class Sanitizers {
         return foundInvites;
     }
 
-    public static String removeMetionsAndIdsFromStart(String s){
-        return s.replaceAll("^(<?[@&!#]{0,}\\d{18,}>? +)+", "").trim();
+    public static String removeMentionsAndIdsFromStart(String s){
+        return s.replaceAll("^(<?[@&!#]*?\\d{18,}>? *)+", "").trim();
     }
 
 
@@ -72,10 +75,14 @@ public class Sanitizers {
     }
 
     //assume this is just a bunch of mentions/numbers with uniform spaces, no other stuff to clean up
+    final static Logger logger = LoggerFactory.getLogger(Sanitizers.class);
+
     public static String[] extractIDsFromIdealStr(String s){
+        logger.debug(s);
         String[] split = s.split(" ");
         String[] extractedIDs = new String[split.length];
         for (int i = 0; i < split.length; i++) {
+            logger.debug(Arrays.toString(split));
             String toClean = split[i];
             toClean = toClean.replaceAll("[<@&!#>]", "");
             extractedIDs[i] = toClean;

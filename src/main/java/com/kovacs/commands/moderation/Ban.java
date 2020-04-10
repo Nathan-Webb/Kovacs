@@ -16,7 +16,6 @@
 
 package com.kovacs.commands.moderation;
 
-import com.ibm.icu.impl.locale.XCldrStub;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.tools.Audit;
@@ -26,9 +25,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.RegEx;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +41,7 @@ public class Ban extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String reason = Sanitizers.removeMetionsAndIdsFromStart(event.getArgs());
+        String reason = Sanitizers.removeMentionsAndIdsFromStart(event.getArgs());
         if(reason.equals("")){
             reason = "No reason given!";
         }
@@ -52,7 +49,6 @@ public class Ban extends Command {
         String toBan = event.getArgs().replaceFirst(reason, "");
 
         String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(toBan));
-
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();
 
