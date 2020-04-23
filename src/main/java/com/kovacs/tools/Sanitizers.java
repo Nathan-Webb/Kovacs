@@ -21,6 +21,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.commandclient.CustomClientBuilder;
 import com.kovacs.database.GuildConfig;
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,14 @@ public class Sanitizers {
         return foundInvites;
     }
 
+    public static String sanitize(String s){
+
+        String s2 = s.replaceAll("[{}()\\\\[\\\\].+*?^$\\\\\\\\|]", "\\\\$0");
+        return s2;
+    }
+
     public static String removeMentionsAndIdsFromStart(String s){
+
         return s.replaceAll("^(<?[@&!#]*?\\d{18,}>? *)+", "").trim();
     }
 
@@ -78,11 +86,11 @@ public class Sanitizers {
     final static Logger logger = LoggerFactory.getLogger(Sanitizers.class);
 
     public static String[] extractIDsFromIdealStr(String s){
-        logger.debug(s);
+        logger.debug("ExtractIDs " + s);
         String[] split = s.split(" ");
         String[] extractedIDs = new String[split.length];
         for (int i = 0; i < split.length; i++) {
-            logger.debug(Arrays.toString(split));
+            //logger.debug("Extract IDs:" + Arrays.toString(split));
             String toClean = split[i];
             toClean = toClean.replaceAll("[<@&!#>]", "");
             extractedIDs[i] = toClean;

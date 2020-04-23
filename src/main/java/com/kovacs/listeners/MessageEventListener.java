@@ -42,11 +42,15 @@ public class MessageEventListener  extends ListenerAdapter {
         if(event.getAuthor().isBot()){
             return;
         }
+
         GuildConfig config = GuildConfig.get(event.getGuild().getId());
         if(config.getWhitelistedChannels().contains(event.getChannel().getId())){
             return;
         }
         if(config.getEnabledAutoMod().contains("duplicates")){
+            if(ConfigTools.canUseBot(event.getMember())){
+                return;
+            }
             boolean dupe = DupeChecker.addAndCheck(event.getMessage());
             if(dupe){
                 Mute.mute(event.getGuild(), event.getMember(), "Anti-Duplicate triggered.");

@@ -41,13 +41,16 @@ public class Ban extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String reason = Sanitizers.removeMentionsAndIdsFromStart(event.getArgs());
+        String clean = Sanitizers.sanitize(event.getArgs());
+        logger.debug(clean);
+        String reason = Sanitizers.removeMentionsAndIdsFromStart(clean);
         if(reason.equals("")){
             reason = "No reason given!";
         }
         int delDays = getDelDays(reason);
-        String toBan = event.getArgs().replaceFirst(reason, "");
-
+        logger.debug("Reason: " + reason);
+        String toBan = clean.replaceFirst(reason, "");
+        logger.debug("ToBan: " + toBan);
         String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(toBan));
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();

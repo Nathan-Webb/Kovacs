@@ -49,7 +49,6 @@ public class GuildConfig implements GuildSettingsProvider {
 
     public static GuildConfig get(String guildID){
         return Database.configCache.get(guildID);
-
     }
 
     GuildConfig(String guildID){ //create with defaults
