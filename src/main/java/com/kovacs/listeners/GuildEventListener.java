@@ -87,7 +87,7 @@ final static Logger logger = LoggerFactory.getLogger(GuildEventListener.class);
             logger.debug("Janitor Triggered.");
             Audit.log(event.getGuild(), event.getJDA(), "Janitor Triggered", event.getJDA().getSelfUser().getAsTag(),
                     event.getJDA().getSelfUser().getAvatarUrl(), "Clearing all " +
-                            "invites made by <@" + event.getMember().getId() + "> because they left the server.");
+                            "invites made by " + event.getUser().getAsTag() + "( " + event.getUser().getId() + ") because they left the server.");
         }
     }
 }

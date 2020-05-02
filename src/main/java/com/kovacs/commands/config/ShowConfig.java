@@ -71,8 +71,8 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
         }
 
         StringBuilder whitelistedChannelBuilder = new StringBuilder();
-        for(String id : sudoRoles){
-            whitelistedChannelBuilder.append(", ").append("<@&").append(id).append(">");
+        for(String id : whitelistedChannels){
+            whitelistedChannelBuilder.append(", ").append("<#").append(id).append(">");
         }
 
         String auditChannel = config.getAuditChannel();
@@ -93,7 +93,7 @@ final static Logger logger = LoggerFactory.getLogger(ShowConfig.class);
                 .addField("Whitelisted Users", (mentionedUsers.equals("") ? "None" : mentionedUsers), true)
                 .addField("Whitelisted Roles", (mentionedRoles.equals("") ? "None" : mentionedRoles), true)
                 .addField("Whitelisted Invites", (inviteStr.equals("") ? "None" : inviteStr), true)
-                .addField("Whitelisted Channels", (mentionedChannels.equals("") ? "None" : inviteStr), true)
+                .addField("Whitelisted Channels", (mentionedChannels.equals("") ? "None" : mentionedChannels), true)
                 .addField("Delete-on-sight", (dosStr.equals("") ? "None" : dosStr), false)
                 .addField("Mute-on-sight", (mosStr.equals("") ? "None" : mosStr), true)
                 .addField("Ban-on-sight", (bosStr.equals("") ? "None" : bosStr), true)

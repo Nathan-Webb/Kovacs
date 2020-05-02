@@ -56,8 +56,6 @@ public class Kovacs {
     public static CommandClient commandClient;
     public static String[] autoMod = new String[]{"bos", "mos", "dos", "dehoist",
             "normalize", "janitor", "invites", "duplicates"};
-    //todo fix the entire bot so that it doesn't rely on regex so much
-
 
     //todo migrate to non-deprecated mongo functions
     public static void main(String[] args) throws LoginException, IOException {
