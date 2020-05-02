@@ -16,7 +16,7 @@
 
 package com.kovacs.tools;
 
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import org.cache2k.Cache2kBuilder;
 
 import java.util.ArrayList;

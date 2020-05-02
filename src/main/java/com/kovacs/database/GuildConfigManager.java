@@ -18,12 +18,12 @@ package com.kovacs.database;
 
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import com.kovacs.Kovacs;
+import com.kovacs.database.objects.GuildConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.net.UnknownHostException;
 
 public class GuildConfigManager implements GuildSettingsManager {
 final static Logger logger = LoggerFactory.getLogger(GuildConfigManager.class);

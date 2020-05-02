@@ -18,7 +18,7 @@ package com.kovacs.listeners;
 
 import com.kovacs.commands.moderation.Mute;
 import com.kovacs.database.ConfigTools;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.DupeChecker;
 import net.dv8tion.jda.api.entities.Message;

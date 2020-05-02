@@ -16,7 +16,7 @@
 
 package com.kovacs.tools;
 
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import net.dv8tion.jda.api.entities.Message;
 import net.ricecode.similarity.JaroWinklerStrategy;
 import net.ricecode.similarity.SimilarityStrategy;

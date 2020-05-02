@@ -21,14 +21,12 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Audit;
-import com.kovacs.tools.Sanitizers;
 import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WhitelistChannels extends Command {

@@ -18,13 +18,11 @@ package com.kovacs.tools;
 
 import com.ibm.icu.text.Normalizer2;
 import com.ibm.icu.text.SpoofChecker;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 public class Unicode {
 

@@ -16,18 +16,10 @@
 
 package com.kovacs.tools;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.commandclient.CustomClientBuilder;
-import com.kovacs.database.GuildConfig;
-import com.vdurmont.emoji.EmojiParser;
-import net.dv8tion.jda.api.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

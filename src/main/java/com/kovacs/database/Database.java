@@ -16,13 +16,13 @@
 
 package com.kovacs.database;
 
+import com.kovacs.database.objects.GuildConfig;
 import com.mongodb.*;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 

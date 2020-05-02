@@ -15,7 +15,7 @@
  */
 package com.kovacs.listeners;
 
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Audit;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;

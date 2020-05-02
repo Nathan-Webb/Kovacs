@@ -16,6 +16,7 @@
 
 package com.kovacs.database;
 
+import com.kovacs.database.objects.GuildConfig;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

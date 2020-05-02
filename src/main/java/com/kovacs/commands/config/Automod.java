@@ -19,7 +19,7 @@ package com.kovacs.commands.config;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.Kovacs;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 
 import java.util.List;
 

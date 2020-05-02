@@ -18,10 +18,9 @@ package com.kovacs.commands.config;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.kovacs.Kovacs;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.mongodb.BasicDBObject;
 import net.dv8tion.jda.api.entities.TextChannel;

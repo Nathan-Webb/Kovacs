@@ -14,10 +14,11 @@
  *    limitations under the License.
  */
 
-package com.kovacs.database;
+package com.kovacs.database.objects;
 
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 import com.kovacs.Kovacs;
+import com.kovacs.database.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ import java.util.Collections;
 public class GuildConfig implements GuildSettingsProvider {
     private String auditChannel = "";
     private String mutedRole = "";
-    private String guildID;
+    private final String guildID;
     private int duplicateThreshold = 4;
     private String prefix = Kovacs.config.getString("prefix");
     private String inviteName = "invite";

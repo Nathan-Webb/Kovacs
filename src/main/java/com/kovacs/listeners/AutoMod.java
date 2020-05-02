@@ -16,14 +16,13 @@
 
 package com.kovacs.listeners;
 
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Cache;
 import com.kovacs.tools.Sanitizers;
 import com.kovacs.tools.Unicode;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import com.kovacs.commandclient.CustomClientBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

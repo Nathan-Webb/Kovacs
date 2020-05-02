@@ -20,7 +20,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.kovacs.database.ConfigTools;
 import com.kovacs.database.Database;
-import com.kovacs.database.GuildConfig;
+import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.tools.Audit;
 import com.kovacs.tools.Cache;
 import com.kovacs.tools.Sanitizers;
