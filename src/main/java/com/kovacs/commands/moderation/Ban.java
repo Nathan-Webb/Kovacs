@@ -41,17 +41,15 @@ public class Ban extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String clean = Sanitizers.sanitize(event.getArgs());
-        logger.debug(clean);
-        String reason = Sanitizers.removeMentionsAndIdsFromStart(clean);
+        String reason = Sanitizers.removeMentionsAndIdsFromStart(event.getArgs());
         if(reason.equals("")){
             reason = "No reason given!";
         }
         int delDays = getDelDays(reason);
         logger.debug("Reason: " + reason);
-        String toBan = clean.replaceFirst(reason, "");
+        String toBan = event.getArgs().replaceFirst(Sanitizers.sanitize(reason), "");
         logger.debug("ToBan: " + toBan);
-        String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(toBan));
+        String[] mentions = Sanitizers.extractIDs(Sanitizers.normalizeSpaces(toBan));
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();
 
@@ -83,10 +81,10 @@ public class Ban extends Command {
 
     private static int getDelDays(String reason){
         reason = reason.toLowerCase().trim();
-        Pattern pattern = Pattern.compile("d(el(ete)?)? *\\d+$");
+        Pattern pattern = Pattern.compile("d(el(ete)?)? *\\d+$|\\d+ *d(ay(s)?)?$");
         Matcher matcher = pattern.matcher(reason);
         if (matcher.find()){
-            return Integer.parseInt(matcher.group().replaceFirst("d(el(ete)?)? ", ""));
+            return Integer.parseInt(matcher.group().replaceFirst("d(el(ete)?)? *| *d(ay(s)?)?$", ""));
         }
         return 0;
     }

@@ -60,7 +60,8 @@ public class Sanitizers {
 
     public static String sanitize(String s){
 
-        String s2 = s.replaceAll("[{}()\\\\[\\\\].+*?^$\\\\\\\\|]", "\\\\$0");
+        String s2 = s.replaceAll("[{}()\\[\\]\\\\[\\\\].+*?^$\\\\\\\\|]", "\\\\$0");
+        logger.debug(s2);
         return s2;
     }
 
@@ -84,19 +85,21 @@ public class Sanitizers {
 
     //assume this is just a bunch of mentions/numbers with uniform spaces, no other stuff to clean up
     final static Logger logger = LoggerFactory.getLogger(Sanitizers.class);
-
-    public static String[] extractIDsFromIdealStr(String s){
+    public static String[] extractIDs(String s){
         logger.debug("ExtractIDs " + s);
         String[] split = s.split(" ");
-        String[] extractedIDs = new String[split.length];
-        for (int i = 0; i < split.length; i++) {
+        ArrayList<String> ids = new ArrayList<>();
+        for (String value : split) {
             //logger.debug("Extract IDs:" + Arrays.toString(split));
-            String toClean = split[i];
+            String toClean = value;
             toClean = toClean.replaceAll("[<@&!#>]", "");
-            extractedIDs[i] = toClean;
+            if (toClean.matches("\\d+")) {
+                ids.add(toClean);
+            }
         }
-        return extractedIDs;
+        return ids.toArray(new String[]{});
     }
+
 
     public static String removeAllMentions(String s){
         return s.replaceAll("<[@&!#]+\\d+>", "");

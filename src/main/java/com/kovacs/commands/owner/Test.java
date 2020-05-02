@@ -18,8 +18,11 @@ package com.kovacs.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.kovacs.tools.Sanitizers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 public class Test extends Command {
     final static Logger logger = LoggerFactory.getLogger(Test.class);
@@ -35,7 +38,12 @@ public class Test extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        String[] mentions = Sanitizers.extractIDs(Sanitizers.normalizeSpaces(event.getArgs()));
+
+        logger.debug(Arrays.toString(mentions));
         event.reply("test");
     }
+
+
 
 }

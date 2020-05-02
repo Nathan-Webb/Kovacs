@@ -37,7 +37,7 @@ public class Unban extends Command {
     @Override
     protected void execute(CommandEvent event) {
 
-        String[] mentions = Sanitizers.extractIDsFromIdealStr(Sanitizers.normalizeSpaces(event.getArgs()));
+        String[] mentions = Sanitizers.extractIDs(Sanitizers.normalizeSpaces(event.getArgs()));
 
         List<String> banSuccess = new ArrayList<>();
         List<String> banFailures = new ArrayList<>();

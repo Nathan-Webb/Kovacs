@@ -45,7 +45,7 @@ public class Prune extends Command {
     protected void execute(CommandEvent event) {
         String args = event.getArgs();
         args = Sanitizers.normalizeSpaces(args);
-        String[] extractedIds = Sanitizers.extractIDsFromIdealStr(args);
+        String[] extractedIds = Sanitizers.extractIDs(args);
         String amount = extractedIds[extractedIds.length - 1];
         String[] idsToPrune = new String[extractedIds.length - 1];
         //leave last arg for max/all/numOfMessages
