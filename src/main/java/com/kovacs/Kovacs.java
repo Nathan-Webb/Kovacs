@@ -24,6 +24,10 @@ import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
+import com.kovacs.commands.notes.AddNote;
+import com.kovacs.commands.notes.CheckNotes;
+import com.kovacs.commands.notes.DelNote;
+import com.kovacs.commands.notes.WipeNote;
 import com.kovacs.commands.owner.ReloadConfig;
 import com.kovacs.commands.owner.Shutdown;
 import com.kovacs.commands.owner.Test;
@@ -86,6 +90,8 @@ public class Kovacs {
         Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new Info()};
 
         Command[] owner = new Command[]{new Shutdown(), new ReloadConfig(), new Test()};
+
+        Command[] notes = new Command[]{new AddNote(), new CheckNotes(), new DelNote(), new WipeNote()};
 
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("botOwner"))

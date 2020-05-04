@@ -19,6 +19,7 @@ package com.kovacs.database;
 import com.kovacs.database.objects.GuildConfig;
 import com.kovacs.database.objects.UserNote;
 import com.mongodb.*;
+import net.dv8tion.jda.api.entities.Member;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
@@ -49,6 +51,24 @@ public class Database {
             })
             .build();
 
+    public static Cache<String, UserNote> userNoteCache = new Cache2kBuilder<String, UserNote>(){}
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .loader(id -> {
+                DBCursor cursor = getCollectionNotes().find(BasicDBObjectBuilder.start("_id", id).get());
+                if(cursor.hasNext()){ //send it through
+
+                    DBObject object = cursor.next();
+                    return dbObjectToUserNote(object);
+                } else { //no notes for that one user for that one server, build one with defaults
+                    String[] split = id.split("-");
+                    UserNote note = new UserNote(split[0], split[1]);
+                    getCollectionNotes().insert(userNoteToDBObject(note)); //insert new config
+                    return note;
+
+                }
+            })
+            .build();
+
     public static void connect(String uri) {
         client = new MongoClient(new MongoClientURI(uri));
     }
@@ -57,6 +77,13 @@ public class Database {
         return client.getDB("kovacs").getCollection("serverConfig");
     }
 
+    public static DBCollection getCollectionNotes(){
+        return client.getDB("kovacs").getCollection("userNotes");
+    }
+
+    public static boolean notesExist(String guildID, String memberID){
+        return getCollectionNotes().find(BasicDBObjectBuilder.start("_id", guildID + "-" + memberID).get()).hasNext();
+    }
 
 
     public static void updateConfig(String serverID, DBObject toChange){
@@ -65,6 +92,24 @@ public class Database {
         getCollectionConfig().update(new BasicDBObject("_id", serverID), new BasicDBObject().append("$set", toChange));
         configCache.put(serverID, dbObjectToConfig(config));
 
+    }
+
+    public static void updateNotes(Member targetMember, Map<String, String> toChange){
+        updateNotes(UserNote.getTag(targetMember), toChange);
+
+    }
+
+    public static void updateNotes(String tag, Map<String, String> toChange){
+        DBObject basic = new BasicDBObject("notes", toChange);
+        DBObject config = userNoteToDBObject(userNoteCache.get(tag));
+        config.putAll(basic);
+        getCollectionNotes().update(new BasicDBObject("_id", tag), new BasicDBObject().append("$set", basic));
+        userNoteCache.put(tag, dbObjectToUserNote(config));
+
+    }
+
+    public static void wipeNotes(String tag){
+        getCollectionNotes().remove(new BasicDBObject("_id", tag));
     }
 
 
@@ -84,7 +129,7 @@ public class Database {
         String guildID;
         String userID;
         String[] split = ((String) object.get("_id")).split("-");
-        return new UserNote(split[0], split[1], ( HashMap<String, String>) object.get("notes"));
+        return new UserNote(split[0], split[1], (HashMap<String, String>) object.get("notes"));
     }
 
     //there has to be a better way to accomplish this

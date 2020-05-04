@@ -77,8 +77,8 @@ public class Sanitizers {
 
     //assume this is just a bunch of mentions/numbers with uniform spaces, no other stuff to clean up
     final static Logger logger = LoggerFactory.getLogger(Sanitizers.class);
+
     public static String[] extractIDs(String s){
-        logger.debug("ExtractIDs " + s);
         String[] split = s.split(" ");
         ArrayList<String> ids = new ArrayList<>();
         for (String value : split) {
