@@ -22,13 +22,14 @@ public class UserNote {
     private final String userID;
     private final String guildID;
     private HashMap<String, String> notes = new HashMap<>();
+    //id of the mod - their note
 
-    public UserNote(String userID, String guildID) {
+    public UserNote(String guildID, String userID) {
         this.userID = userID;
         this.guildID = guildID;
     }
 
-    public UserNote(String userID, String guildID, HashMap<String, String> notes) {
+    public UserNote(String guildID, String userID, HashMap<String, String> notes) {
         this.userID = userID;
         this.guildID = guildID;
         this.notes = notes;

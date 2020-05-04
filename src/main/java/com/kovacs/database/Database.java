@@ -17,6 +17,7 @@
 package com.kovacs.database;
 
 import com.kovacs.database.objects.GuildConfig;
+import com.kovacs.database.objects.UserNote;
 import com.mongodb.*;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
@@ -72,6 +74,18 @@ public class Database {
     }
 
 
+    public static DBObject userNoteToDBObject(UserNote note){
+        return new BasicDBObjectBuilder().add("_id", note.getGuildID() + "-" + note.getUserID())
+                .add("notes", note.getNotes()).get();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static UserNote dbObjectToUserNote(DBObject object){
+        String guildID;
+        String userID;
+        String[] split = ((String) object.get("_id")).split("-");
+        return new UserNote(split[0], split[1], ( HashMap<String, String>) object.get("notes"));
+    }
 
     //there has to be a better way to accomplish this
     public static DBObject configToDBObject(GuildConfig config){
