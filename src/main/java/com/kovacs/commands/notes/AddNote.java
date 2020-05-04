@@ -45,6 +45,7 @@ public class AddNote extends Command {
             event.reply("You must provide a valid user!");
             return;
         }
+        event.reply("What would you like the note to say?");
         UserNote note = UserNote.get(event.getGuild().getId(), userID);
         if(note.getNotes().size() < 25){
             Kovacs.waiter.waitForEvent(MessageReceivedEvent.class,
@@ -53,6 +54,7 @@ public class AddNote extends Command {
                         Map<String, String> map = note.getNotes();
                         map.put(event.getAuthor().getId(), response.getMessage().getContentRaw());
                         Database.updateNotes(note.getTag(), map);
+                        event.reply("Note added.");
                     },3, TimeUnit.MINUTES, () -> event.reply("Sorry, you took too long! Command failed"));
         } else {
             event.reply("You can only have a maximum of 25 active notes!");

@@ -100,12 +100,16 @@ public class Database {
     }
 
     public static void updateNotes(String tag, Map<String, String> toChange){
-        DBObject basic = new BasicDBObject("notes", toChange);
-        DBObject config = userNoteToDBObject(userNoteCache.get(tag));
-        config.putAll(basic);
-        getCollectionNotes().update(new BasicDBObject("_id", tag), new BasicDBObject().append("$set", basic));
-        userNoteCache.put(tag, dbObjectToUserNote(config));
-
+        if(toChange.size() == 0){ //no data - no point in having it in db
+            wipeNotes(tag);
+            userNoteCache.remove(tag);
+        } else {
+            DBObject basic = new BasicDBObject("notes", toChange);
+            DBObject config = userNoteToDBObject(userNoteCache.get(tag));
+            config.putAll(basic);
+            getCollectionNotes().update(new BasicDBObject("_id", tag), new BasicDBObject().append("$set", basic));
+            userNoteCache.put(tag, dbObjectToUserNote(config));
+        }
     }
 
     public static void wipeNotes(String tag){

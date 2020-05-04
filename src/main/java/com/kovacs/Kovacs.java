@@ -91,7 +91,7 @@ public class Kovacs {
 
         Command[] owner = new Command[]{new Shutdown(), new ReloadConfig(), new Test()};
 
-        Command[] notes = new Command[]{new AddNote(), new CheckNotes(), new DelNote(), new WipeNote()};
+        Command[] notes = new Command[]{new CheckNotes()};
 
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("botOwner"))
@@ -102,6 +102,7 @@ public class Kovacs {
                 .addCommands(moderation)
                 .addCommands(generic)
                 .addCommands(owner)
+                .addCommands(notes)
                 .setActivity(Activity.of(ActivityType.valueOf(ActivityType.class, config.getString("activityType")),
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)

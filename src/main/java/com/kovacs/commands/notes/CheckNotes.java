@@ -29,7 +29,7 @@ public class CheckNotes extends Command {
     public CheckNotes() {
         this.name = "CheckNotes";
         this.aliases = new String[]{"notes", "note"};
-        this.children = new Command[]{new AddNote(), new DelNote()};
+        this.children = new Command[]{new AddNote(), new DelNote(), new WipeNote()};
     }
 
     //notes @userToCheck @userWhoTookNotes
@@ -38,7 +38,7 @@ public class CheckNotes extends Command {
     protected void execute(CommandEvent event) {
         UserNote userNote = UserNote.findUserNote(event);
         if(userNote == null){
-            event.reply("Either there were no notes on the provided user, or you failed to provide a valid user.");
+            event.reply("Either there were no notes for the provided user, or you failed to provide a valid user.");
             return;
         }
         String[] extractedIDs = Sanitizers.extractIDs(event.getArgs());

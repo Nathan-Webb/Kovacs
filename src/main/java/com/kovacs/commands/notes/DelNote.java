@@ -29,7 +29,7 @@ import java.util.HashMap;
 public class DelNote extends Command {
     public DelNote() {
         this.name = "DelNote";
-        this.aliases = new String[]{"remove", "delete"};
+        this.aliases = new String[]{"remove", "delete", "del"};
     }
 
     //delete your own note from user, can also delete other notes if sudo
