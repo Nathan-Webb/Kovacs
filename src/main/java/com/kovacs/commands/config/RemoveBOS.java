@@ -32,7 +32,7 @@ import java.util.Arrays;
 public class RemoveBOS extends Command {
     public RemoveBOS() {
         this.name = "RemoveBOS";
-        this.aliases = new String[]{"rbos", "rmbos"};
+        this.aliases = new String[]{"rbos", "rmbos", "delbos"};
     }
 
     @Override

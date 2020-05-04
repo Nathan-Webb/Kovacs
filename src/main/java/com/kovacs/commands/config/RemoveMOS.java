@@ -31,7 +31,7 @@ import java.util.Arrays;
 public class RemoveMOS extends Command {
     public RemoveMOS() {
         this.name = "RemoveMOS";
-        this.aliases = new String[]{"rmos", "rmmos"};
+        this.aliases = new String[]{"rmos", "rmmos", "delmos"};
     }
 
     @Override

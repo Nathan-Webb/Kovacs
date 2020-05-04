@@ -31,7 +31,7 @@ import java.util.Arrays;
 public class RemoveDOS extends Command {
     public RemoveDOS() {
         this.name = "RemoveDOS";
-        this.aliases = new String[]{"rdos", "rmdos"};
+        this.aliases = new String[]{"rdos", "rmdos", "deldos"};
     }
 
     @Override
