@@ -24,10 +24,7 @@ import com.kovacs.commands.generic.*;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.kovacs.commands.config.*;
 import com.kovacs.commands.moderation.*;
-import com.kovacs.commands.notes.AddNote;
 import com.kovacs.commands.notes.CheckNotes;
-import com.kovacs.commands.notes.DelNote;
-import com.kovacs.commands.notes.WipeNote;
 import com.kovacs.commands.owner.ReloadConfig;
 import com.kovacs.commands.owner.Shutdown;
 import com.kovacs.commands.owner.Test;
@@ -87,7 +84,7 @@ public class Kovacs {
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
                 new ManageNicks()};
 
-        Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new Info(), new UserInfo()};
+        Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new BotInfo(), new UserInfo()};
 
         Command[] owner = new Command[]{new Shutdown(), new ReloadConfig(), new Test()};
 

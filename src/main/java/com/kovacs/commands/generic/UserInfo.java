@@ -29,7 +29,7 @@ import java.util.Locale;
 public class UserInfo extends Command {
     public UserInfo() {
         this.name = "UserInfo";
-        this.aliases = new String[]{"i", "ui"};
+        this.aliases = new String[]{"i", "ui", "info"};
     }
     //todo add stuff for if the user is in the guild.
 

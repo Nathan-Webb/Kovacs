@@ -22,10 +22,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
 
-public class Info extends Command {
-    public Info() {
-        this.name = "Info";
-        this.aliases = new String[]{"botinfo", "dont_remove_this_or_else_ill_be_sad"};
+public class BotInfo extends Command {
+    public BotInfo() {
+        this.name = "BotInfo";
+        this.aliases = new String[]{"dont_remove_this_or_else_ill_be_sad"};
     }
 
     @Override
