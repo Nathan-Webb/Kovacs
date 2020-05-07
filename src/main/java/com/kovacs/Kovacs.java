@@ -87,7 +87,7 @@ public class Kovacs {
         Command[] moderation = new Command[]{new Ban(), new Mute(), new Unban(), new UnMute(), new Prune(),
                 new ManageNicks()};
 
-        Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new Info()};
+        Command[] generic = new Command[]{new Ping(), new Normalize(), new Help(), new Info(), new UserInfo()};
 
         Command[] owner = new Command[]{new Shutdown(), new ReloadConfig(), new Test()};
 
