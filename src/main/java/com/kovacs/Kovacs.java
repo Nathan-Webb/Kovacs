@@ -28,6 +28,7 @@ import com.kovacs.commands.notes.CheckNotes;
 import com.kovacs.commands.owner.ReloadConfig;
 import com.kovacs.commands.owner.Shutdown;
 import com.kovacs.commands.owner.Test;
+import com.kovacs.commands.toolbox.GenerateInvite;
 import com.kovacs.database.GuildConfigManager;
 import com.kovacs.listeners.*;
 import com.kovacs.tools.BotConfig;
@@ -90,6 +91,8 @@ public class Kovacs {
 
         Command[] notes = new Command[]{new CheckNotes()};
 
+        Command[] toolbox = new Command[]{new GenerateInvite()};
+
         return new CustomClientBuilder()
                 .setOwnerId(config.getString("botOwner"))
                 .setCoOwnerIds(config.getJSONArray("coOwners").toList().toArray(new String[]{}))
@@ -100,6 +103,7 @@ public class Kovacs {
                 .addCommands(generic)
                 .addCommands(owner)
                 .addCommands(notes)
+                .addCommands(toolbox)
                 .setActivity(Activity.of(ActivityType.valueOf(ActivityType.class, config.getString("activityType")),
                         config.getString("activityMessage")))
                 .useHelpBuilder(false)

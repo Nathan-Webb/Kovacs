@@ -32,6 +32,10 @@ public class UserInfo extends Command {
         this.aliases = new String[]{"i", "ui", "info"};
     }
     //todo add stuff for if the user is in the guild.
+    //todo use member,whatevs
+    //add an invite link if they are bots
+
+
 
     @Override
     protected void execute(CommandEvent event) {
